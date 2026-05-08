@@ -107,14 +107,6 @@ function IconSparkle({ className = "h-4 w-4" }) {
     );
 }
 
-function IconInfo({ className = "h-4 w-4" }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-    );
-}
-
 function IconSpinner({ className = "h-4 w-4" }) {
     return (
         <svg className={`animate-spin ${className}`} fill="none" viewBox="0 0 24 24">
@@ -268,17 +260,6 @@ function PhishingPanel({ phishing }) {
                         <p className="text-xs text-gray-400 italic">No heuristic flags triggered.</p>
                     )}
 
-                    {!hasGSB && !hasVT && (
-                        <div className="flex items-start gap-2 p-2 rounded bg-blue-50 border border-blue-100">
-                            <IconInfo className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-blue-600">
-                                Add{" "}
-                                <code className="font-mono bg-blue-100 px-1 rounded">SAFE_BROWSING_API_KEY</code> and{" "}
-                                <code className="font-mono bg-blue-100 px-1 rounded">VIRUSTOTAL_API_KEY</code> to{" "}
-                                <code className="font-mono bg-blue-100 px-1 rounded">.env</code> for deeper scanning.
-                            </p>
-                        </div>
-                    )}
                 </div>
             )}
         </div>

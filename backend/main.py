@@ -96,8 +96,10 @@ BRAND_OFFICIAL_DOMAINS = {
 SUSPICIOUS_TLDS = {
     ".tk", ".ml", ".ga", ".cf", ".gq", ".xyz", ".top", ".club",
     ".online", ".site", ".website", ".info", ".biz", ".pw",
-    ".cc", ".ws", ".nu", ".to", ".in", ".ru", ".cn", ".buzz",
+    ".cc", ".ws", ".nu", ".to", ".ru", ".cn", ".buzz",
     ".live", ".click", ".link", ".download", ".win", ".loan",
+    ".cash", ".io", ".finance", ".capital", ".investments",
+    ".trading", ".exchange", ".market", ".money", ".fund",
 }
 
 URL_SHORTENERS = {
@@ -108,6 +110,11 @@ URL_SHORTENERS = {
 LEGITIMATE_STORAGE_BRANDS = {
     "google", "drive", "dropbox", "onedrive", "icloud", "mega", "box",
     "wetransfer", "mediafire", "sendspace",
+}
+
+LEGITIMATE_IO_DOMAINS = {
+    "github.io", "gitlab.io", "codepen.io", "replit.io", "vercel.io",
+    "netlify.io", "heroku.io", "render.io", "railway.io",
 }
 
 PHISHING_PATTERNS: list[tuple[str, str, int]] = [
@@ -138,12 +145,24 @@ PHISHING_PATTERNS: list[tuple[str, str, int]] = [
     (r"#\d{13,}$",                         "Numeric timestamp fragment (tracking/campaign ID)", 1),
 
     (r"\?[a-z0-9]+=\d{3,}(&[a-z0-9]+=\d+)*#",  "Numeric-only query params + fragment (campaign tracking)", 1),
+
+    (r"(coin|crypto|wallet|token|nft|defi|bitcoin|ethereum|binance)[a-z0-9]*\.(io|cash|top|xyz|online|site|finance|capital|exchange|market)", "Crypto-themed domain on high-risk TLD — common investment scam", 3),
+    (r"(kringle|xmas|santa|holiday)[a-z0-9]*\.(cash|io|top|xyz|online)", "Suspicious seasonal/gift domain on high-risk TLD", 3),
+    (r"(earn|profit|invest|income|revenue|payout|dividend)[a-z0-9-]*\.(cash|io|top|xyz|online|finance)", "Investment lure on high-risk TLD", 3),
+
+    (r"/(registration_form|register_form|signup_form|login_form|verify_form)\.", "Credential harvesting form path detected", 3),
+    (r"/(registration|signup|enroll|join|create.?account)[^/]*\.php", "Suspicious registration PHP page", 2),
+
+    (r"\?(link|ref|referral|aff|affiliate|invite|code)=[a-z0-9_-]+$", "Referral/affiliate parameter — common in scam recruitment", 2),
+
+    (r"(sbc|doge|shib|pepe|floki|luna|bnb|trx|usdt)[a-z0-9]*coin[a-z0-9]*\.", "Meme/altcoin scam domain pattern", 3),
+    (r"(sbc|doge|shib|pepe|floki|luna|bnb|trx|usdt)[a-z0-9]*\.(io|cash|finance|exchange|market|capital)", "Altcoin-themed domain on financial TLD", 3),
 ]
 
 SEVERITY_WEIGHT = {1: 1, 2: 3, 3: 7}
 
-SCORE_SUSPICIOUS  = 3   
-SCORE_DANGEROUS   = 7   
+SCORE_SUSPICIOUS  = 3
+SCORE_DANGEROUS   = 7
 
 
 def sanitize_url(raw: str) -> str:
@@ -187,6 +206,7 @@ def is_safe_url(url: str) -> tuple[bool, str]:
     except Exception as e:
         return False, f"Invalid URL: {str(e)}"
 
+
 def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     """
     Rule-based phishing detection.
@@ -225,12 +245,14 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     elif subdomain_depth >= 2:
         add_flag(f"Multiple subdomains ({subdomain_depth} levels deep)", 1)
 
+    bare_host = hostname.replace("www.", "")
     for tld in SUSPICIOUS_TLDS:
         if hostname.endswith(tld):
+            if tld == ".io" and any(hostname.endswith(d) for d in LEGITIMATE_IO_DOMAINS):
+                break
             add_flag(f"High-risk top-level domain: {tld}", 2)
             break
 
-    bare_host = hostname.replace("www.", "")
     if bare_host in URL_SHORTENERS:
         add_flag(f"URL shortener detected ({bare_host}) — real destination is hidden", 2)
 
@@ -256,14 +278,16 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     sensitive_path_keywords = [
         "login", "signin", "verify", "account", "secure", "update",
         "password", "credential", "confirm", "auth", "token", "reset",
+        "registration_form", "register", "signup", "enroll",
+        "create_account", "createaccount", "join", "subscribe",
     ]
-    has_sensitive_path = any(kw in path or kw in query for kw in sensitive_path_keywords)
     is_well_known_domain = any(hostname.endswith(d) for d in [
         "google.com", "microsoft.com", "apple.com", "amazon.com", "paypal.com",
         "facebook.com", "twitter.com", "github.com", "linkedin.com", "dropbox.com",
     ])
+    has_sensitive_path = any(kw in path or kw in query for kw in sensitive_path_keywords)
     if has_sensitive_path and not is_well_known_domain:
-        add_flag("Sensitive path/query keywords (login/verify/account/auth) on unrecognized domain", 2)
+        add_flag("Sensitive path/query keywords (login/verify/account/register) on unrecognized domain", 2)
 
     homoglyph_patterns = [
         (r"[a-z]0[a-z]", "Digit '0' possibly substituted for letter 'o'"),
@@ -286,7 +310,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     for kw in giveaway_keywords:
         if re.search(kw, full_url_lower):
             add_flag(f"Free giveaway/storage lure keyword detected: '{kw}'", 3)
-            break   
+            break
 
     if fragment and re.match(r"^\d{10,}$", fragment):
         add_flag(f"Numeric-only URL fragment (#{fragment[:20]}...) — campaign tracking ID", 1)
@@ -294,8 +318,18 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     if query and re.match(r"^[a-z0-9]+=\d+$", query) and not is_well_known_domain:
         add_flag("Query string is a single numeric parameter on an unrecognized domain — likely campaign tracking", 1)
 
-    return score > 0, flags, score
+    if re.search(r"\.(php|aspx|asp)$", path) and not is_well_known_domain:
+        php_suspicious_paths = ["registration", "signup", "register", "login", "verify", "confirm", "account"]
+        if any(kw in path for kw in php_suspicious_paths):
+            add_flag(f"PHP/ASPX form page with sensitive keyword on unrecognized domain — likely credential harvesting", 3)
 
+    financial_tlds = {".cash", ".finance", ".capital", ".investments", ".trading", ".exchange", ".money", ".fund"}
+    for ftld in financial_tlds:
+        if hostname.endswith(ftld) and not is_well_known_domain:
+            add_flag(f"Domain uses financial TLD ({ftld}) — commonly used in investment/crypto scams", 3)
+            break
+
+    return score > 0, flags, score
 
 def compute_risk_level(
     score: int,
@@ -353,7 +387,7 @@ async def check_google_safe_browsing(urls: list[str]) -> dict[str, str]:
                 threat = match.get("threatType", "UNKNOWN")
                 results[url] = threat
     except Exception:
-        pass  
+        pass
 
     return results
 
@@ -401,6 +435,7 @@ async def check_virustotal(url: str) -> tuple[bool, str]:
     except Exception:
         return False, ""
 
+
 class LinkCheckRequest(BaseModel):
     urls: list[str]
 
@@ -427,8 +462,8 @@ class BulkTextRequest(BaseModel):
 
 class PhishingAnalysis(BaseModel):
     is_suspicious: bool
-    risk_level: str                 
-    phishing_score: int             
+    risk_level: str
+    phishing_score: int
     heuristic_flags: list[str]
     safe_browsing_threat: str | None
     virustotal_summary: str | None
@@ -444,7 +479,6 @@ class LinkResult(BaseModel):
     ai_analysis: str | None
     phishing: PhishingAnalysis | None
     checked_at: str
-
 
 
 async def check_single_link(
@@ -486,7 +520,6 @@ async def check_single_link(
                     )
 
             status_code = response.status_code
-        
             is_alive = response.status_code < 400
             elapsed  = round(elapsed, 2)
 
@@ -503,12 +536,25 @@ async def check_single_link(
 
     if redirect_url:
         orig_suspicious, orig_flags, orig_score = heuristic_phishing_check(url)
-        if orig_score > phishing_score:
-            phishing_score = orig_score
+        phishing_score = phishing_score + orig_score
         for f in orig_flags:
             if f not in heuristic_flags:
                 heuristic_flags.append(f"[original URL] {f}")
         is_suspicious_heuristic = is_suspicious_heuristic or orig_suspicious
+
+        orig_parsed = urlparse(url)
+        redir_parsed = urlparse(redirect_url)
+        orig_host = (orig_parsed.hostname or "").lower()
+        redir_host = (redir_parsed.hostname or "").lower()
+        if orig_host != redir_host:
+            well_known = {"google.com", "microsoft.com", "apple.com", "amazon.com",
+                          "facebook.com", "twitter.com", "github.com", "linkedin.com"}
+            if not any(orig_host.endswith(d) for d in well_known) and \
+               not any(redir_host.endswith(d) for d in well_known):
+                heuristic_flags.append(
+                    f"Redirect between two unrecognized domains ({orig_host} → {redir_host}) — common in phishing chains"
+                )
+                phishing_score += SEVERITY_WEIGHT[2]
 
     gsb_threat = safe_browsing_hits.get(url) or safe_browsing_hits.get(check_url)
 
@@ -534,10 +580,11 @@ async def check_single_link(
         response_time_ms=elapsed,
         redirect_url=redirect_url,
         error=http_error,
-        ai_analysis=None,  
+        ai_analysis=None,
         phishing=phishing,
         checked_at=datetime.utcnow().isoformat(),
     )
+
 
 async def call_gemini_rest(model: str, prompt: str) -> str:
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
@@ -581,15 +628,19 @@ Analyze the following URLs using ALL available signals (heuristic flags, risk sc
 
 For each URL, assess:
 1. Is it likely a phishing/malicious site? Why?
-2. What specific lure or attack vector does it use (free storage, brand impersonation, urgency, etc.)?
+2. What specific lure or attack vector does it use (free storage, brand impersonation, crypto scam, referral recruitment, urgency, etc.)?
 3. What do the heuristic flags and score indicate?
 4. Overall verdict: SAFE / SUSPICIOUS / DANGEROUS
 
 Pay special attention to:
 - Free giveaway / storage lures (e.g. "51gb-free", "labor-day-free")
-- Random-looking domains on high-risk TLDs (.top, .xyz, .online, etc.)
+- Random-looking domains on high-risk TLDs (.top, .xyz, .online, .cash, .io, etc.)
+- Crypto/investment scam domains (coin, wallet, token, sbc, etc.)
+- Registration or sign-up forms on unknown domains (registration_form.php, signup.php, etc.)
+- Referral/affiliate links (?link=, ?ref=, ?aff=) used to recruit victims
+- Redirect chains between two unknown domains
 - Numeric campaign tracking in query params and fragments
-- Any domain that is NOT a well-known brand but contains gift/prize/free/storage keywords
+- Any domain that is NOT a well-known brand but contains gift/prize/free/storage/crypto keywords
 
 End with a concise summary and a prioritized list of URLs that need immediate action.
 Be direct and specific. Avoid vague language."""
@@ -607,6 +658,7 @@ Be direct and specific. Avoid vague language."""
             last_error = str(e)
             continue
     return None
+
 
 @app.post("/check-links", response_model=dict)
 @limiter.limit("30/minute")
@@ -629,8 +681,8 @@ async def check_links(request: Request, body: LinkCheckRequest):
 
     ai_summary = await get_ai_analysis(results)
 
-    alive_count     = sum(1 for r in results if r.is_alive)
-    dangerous_count = sum(1 for r in results if r.phishing and r.phishing.risk_level == "dangerous")
+    alive_count      = sum(1 for r in results if r.is_alive)
+    dangerous_count  = sum(1 for r in results if r.phishing and r.phishing.risk_level == "dangerous")
     suspicious_count = sum(1 for r in results if r.phishing and r.phishing.risk_level == "suspicious")
 
     return {
