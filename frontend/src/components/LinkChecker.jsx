@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const MAX_URL_LENGTH = 2048;
 const MAX_BULK_LENGTH = 50000;
 
