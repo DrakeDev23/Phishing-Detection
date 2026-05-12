@@ -44,7 +44,7 @@ SAFE_BROWSING_API_KEY = os.getenv("SAFE_BROWSING_API_KEY", "")
 VIRUSTOTAL_API_KEY = os.getenv("VIRUSTOTAL_API_KEY", "")
 
 GEMINI_MODELS = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]
->
+
 MAX_URL_LENGTH = 2048
 MAX_URLS_PER_REQUEST = 20
 MAX_BULK_TEXT_LENGTH = 50_000
