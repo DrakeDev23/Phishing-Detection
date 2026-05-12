@@ -44,7 +44,7 @@ SAFE_BROWSING_API_KEY = os.getenv("SAFE_BROWSING_API_KEY", "")
 VIRUSTOTAL_API_KEY = os.getenv("VIRUSTOTAL_API_KEY", "")
 
 GEMINI_MODELS = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"]
-
+>
 MAX_URL_LENGTH = 2048
 MAX_URLS_PER_REQUEST = 20
 MAX_BULK_TEXT_LENGTH = 50_000
@@ -68,32 +68,35 @@ KNOWN_BRANDS = [
 ]
 
 BRAND_OFFICIAL_DOMAINS = {
-    "paypal":     "paypal.com",
-    "google":     "google.com",
-    "apple":      "apple.com",
-    "microsoft":  "microsoft.com",
-    "amazon":     "amazon.com",
-    "facebook":   "facebook.com",
-    "instagram":  "instagram.com",
-    "twitter":    "twitter.com",
-    "netflix":    "netflix.com",
-    "steam":      "steampowered.com",
-    "discord":    "discord.com",
-    "roblox":     "roblox.com",
-    "chase":      "chase.com",
-    "wellsfargo": "wellsfargo.com",
-    "citibank":   "citibank.com",
-    "hsbc":       "hsbc.com",
-    "barclays":   "barclays.co.uk",
-    "ebay":       "ebay.com",
-    "shopify":    "shopify.com",
-    "dropbox":    "dropbox.com",
-    "linkedin":   "linkedin.com",
-    "whatsapp":   "whatsapp.com",
-    "telegram":   "telegram.org",
-    "yahoo":      "yahoo.com",
-    "outlook":    "outlook.com",
-    "office365":  "office.com",
+    "google":     ["google.com", "google.com.hk", "google.co.uk", "google.com.ph",
+                   "google.co.jp", "google.com.au", "google.de", "google.fr",
+                   "google.co.in", "google.com.br", "google.ca", "google.co.id"],
+    "paypal":     ["paypal.com"],
+    "apple":      ["apple.com"],
+    "microsoft":  ["microsoft.com", "microsoft.com.hk"],
+    "amazon":     ["amazon.com", "amazon.co.uk", "amazon.co.jp", "amazon.de",
+                   "amazon.fr", "amazon.ca", "amazon.com.au"],
+    "facebook":   ["facebook.com"],
+    "instagram":  ["instagram.com"],
+    "twitter":    ["twitter.com", "x.com"],
+    "netflix":    ["netflix.com"],
+    "steam":      ["steampowered.com"],
+    "discord":    ["discord.com"],
+    "roblox":     ["roblox.com"],
+    "chase":      ["chase.com"],
+    "wellsfargo": ["wellsfargo.com"],
+    "citibank":   ["citibank.com"],
+    "hsbc":       ["hsbc.com", "hsbc.co.uk"],
+    "barclays":   ["barclays.co.uk", "barclays.com"],
+    "ebay":       ["ebay.com", "ebay.co.uk", "ebay.de"],
+    "shopify":    ["shopify.com"],
+    "dropbox":    ["dropbox.com"],
+    "linkedin":   ["linkedin.com"],
+    "whatsapp":   ["whatsapp.com"],
+    "telegram":   ["telegram.org"],
+    "yahoo":      ["yahoo.com", "yahoo.co.jp", "yahoo.co.uk"],
+    "outlook":    ["outlook.com"],
+    "office365":  ["office.com", "office365.com"],
 }
 
 SUSPICIOUS_TLDS = {
@@ -260,9 +263,11 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
         add_flag(f"URL shortener detected ({bare_host}) — real destination is hidden", 2)
 
     for brand in KNOWN_BRANDS:
-        official = BRAND_OFFICIAL_DOMAINS.get(brand, f"{brand}.com")
-        if brand in hostname and not hostname.endswith(official):
-            add_flag(f"Brand '{brand}' used in non-official domain (expected *.{official})", 3)
+        official = BRAND_OFFICIAL_DOMAINS.get(brand, [f"{brand}.com"])
+        if isinstance(official, str):
+            official = [official]
+        if brand in hostname and not any(hostname.endswith(d) for d in official):
+            add_flag(f"Brand '{brand}' used in non-official domain (expected one of: {', '.join(official)})", 3)
 
     url_len = len(url)
     if url_len > 200:
