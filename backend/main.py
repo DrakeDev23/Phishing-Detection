@@ -244,12 +244,21 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     except ValueError:
         pass
 
+    is_well_known_domain = any(hostname.endswith(d) for d in [
+        "google.com", "google.com.hk", "google.co.uk", "google.com.ph",
+        "google.co.jp", "google.com.au", "google.de", "google.fr",
+        "microsoft.com", "apple.com", "amazon.com", "paypal.com",
+        "facebook.com", "twitter.com", "github.com", "linkedin.com", "dropbox.com",
+    ])
+
+
     parts = hostname.split(".")
     subdomain_depth = len(parts) - 2
-    if subdomain_depth >= 4:
-        add_flag(f"Excessive subdomains ({subdomain_depth} levels deep) — classic domain-disguise technique", 3)
-    elif subdomain_depth >= 2:
-        add_flag(f"Multiple subdomains ({subdomain_depth} levels deep)", 1)
+    if not is_well_known_domain:
+        if subdomain_depth >= 4:
+            add_flag(f"Excessive subdomains ({subdomain_depth} levels deep) — classic domain-disguise technique", 3)
+        elif subdomain_depth >= 2:
+            add_flag(f"Multiple subdomains ({subdomain_depth} levels deep)", 1)
 
     bare_host = hostname.replace("www.", "")
     for tld in SUSPICIOUS_TLDS:
@@ -289,10 +298,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
         "registration_form", "register", "signup", "enroll",
         "create_account", "createaccount", "join", "subscribe",
     ]
-    is_well_known_domain = any(hostname.endswith(d) for d in [
-        "google.com", "microsoft.com", "apple.com", "amazon.com", "paypal.com",
-        "facebook.com", "twitter.com", "github.com", "linkedin.com", "dropbox.com",
-    ])
+  
     has_sensitive_path = any(kw in path or kw in query for kw in sensitive_path_keywords)
     if has_sensitive_path and not is_well_known_domain:
         add_flag("Sensitive path/query keywords (login/verify/account/register) on unrecognized domain", 2)
