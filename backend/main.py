@@ -288,6 +288,8 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     for pattern, reason, weight in PHISHING_PATTERNS:
         if reason in seen_patterns:
             continue
+        if is_well_known_domain and "brand spoofing" in reason:
+            continue
         if re.search(pattern, full_url_lower) or re.search(pattern, decoded_url):
             add_flag(reason, weight)
             seen_patterns.add(reason)
