@@ -104,8 +104,6 @@ SUSPICIOUS_TLDS = {
     ".online", ".site", ".website", ".info", ".biz", ".pw",
     ".cc", ".ws", ".nu", ".to", ".ru", ".cn", ".buzz",
     ".live", ".click", ".link", ".download", ".win", ".loan",
-    ".cash", ".io", ".finance", ".capital", ".investments",
-    ".trading", ".exchange", ".market", ".money", ".fund",
 }
 
 URL_SHORTENERS = {
@@ -116,11 +114,6 @@ URL_SHORTENERS = {
 LEGITIMATE_STORAGE_BRANDS = {
     "google", "drive", "dropbox", "onedrive", "icloud", "mega", "box",
     "wetransfer", "mediafire", "sendspace",
-}
-
-LEGITIMATE_IO_DOMAINS = {
-    "github.io", "gitlab.io", "codepen.io", "replit.io", "vercel.io",
-    "netlify.io", "heroku.io", "render.io", "railway.io",
 }
 
 PHISHING_PATTERNS: list[tuple[str, str, int]] = [
@@ -263,8 +256,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     bare_host = hostname.replace("www.", "")
     for tld in SUSPICIOUS_TLDS:
         if hostname.endswith(tld):
-            if tld == ".io" and any(hostname.endswith(d) for d in LEGITIMATE_IO_DOMAINS):
-                break
             add_flag(f"High-risk top-level domain: {tld}", 2)
             break
 
@@ -305,17 +296,17 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     if has_sensitive_path and not is_well_known_domain:
         add_flag("Sensitive path/query keywords (login/verify/account/register) on unrecognized domain", 2)
 
+    sld = parts[0] if len(parts) >= 2 else ""
+
     homoglyph_patterns = [
         (r"[a-z]0[a-z]", "Digit '0' possibly substituted for letter 'o'"),
         (r"[a-z]1[a-z]", "Digit '1' possibly substituted for letter 'l' or 'i'"),
-        (r"rn[aeiou]",   "Possible 'rn' → 'm' homoglyph"),
     ]
     for pat, msg in homoglyph_patterns:
-        if re.search(pat, hostname):
+        if re.search(pat, sld):
             add_flag(f"Possible homoglyph/lookalike attack: {msg}", 2)
 
-    sld = parts[0] if len(parts) >= 2 else ""
-    if re.match(r"^[a-z]{2,6}\d{1,5}[a-z]{1,5}$", sld):
+    if re.match(r"^[a-z]{2,5}\d{3,5}[a-z]{1,4}$", sld):
         add_flag(f"Domain SLD looks randomly generated ('{sld}') — common in phishing infrastructure", 2)
 
     giveaway_keywords = [
