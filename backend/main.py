@@ -169,8 +169,16 @@ def is_trusted_domain(hostname: str) -> bool:
     """
     Returns True if the hostname is an exact match or subdomain of a trusted domain.
     e.g. 'www.youtube.com' and 'accounts.google.com' both return True.
+
+    FIX: Use proper prefix removal instead of lstrip() which strips characters
+    not strings. lstrip("www.") would incorrectly strip 'w', 'w', 'w', '.'
+    individually rather than the whole prefix "www."
     """
-    hostname = hostname.lower().lstrip("www.")
+    hostname = hostname.lower()
+    # Properly remove www. prefix
+    if hostname.startswith("www."):
+        hostname = hostname[4:]
+
     if hostname in TRUSTED_DOMAINS:
         return True
     # Check if it's a subdomain of a trusted root
@@ -705,15 +713,20 @@ async def check_single_link(
         redir_parsed = urlparse(redirect_url)
         orig_host = (orig_parsed.hostname or "").lower()
         redir_host = (redir_parsed.hostname or "").lower()
+
         if orig_host != redir_host:
-            well_known = {"google.com", "microsoft.com", "apple.com", "amazon.com",
-                          "facebook.com", "twitter.com", "github.com", "linkedin.com"}
-            if not any(orig_host.endswith(d) for d in well_known) and \
-               not any(redir_host.endswith(d) for d in well_known):
-                heuristic_flags.append(
-                    f"Redirect between two unrecognized domains ({orig_host} → {redir_host}) — common in phishing chains"
-                )
-                phishing_score += SEVERITY_WEIGHT[2]
+            # FIX: Use is_trusted_domain() instead of a small hardcoded set.
+            # Prevents shodan.io -> www.shodan.io from being flagged as suspicious.
+            if not is_trusted_domain(orig_host) and not is_trusted_domain(redir_host):
+                # Also skip if it's just a www. redirect on the same base domain
+                # e.g. shodan.io -> www.shodan.io should never be flagged
+                orig_base = orig_host[4:] if orig_host.startswith("www.") else orig_host
+                redir_base = redir_host[4:] if redir_host.startswith("www.") else redir_host
+                if orig_base != redir_base:
+                    heuristic_flags.append(
+                        f"Redirect between two unrecognized domains ({orig_host} → {redir_host}) — common in phishing chains"
+                    )
+                    phishing_score += SEVERITY_WEIGHT[2]
 
     gsb_threat = safe_browsing_hits.get(url) or safe_browsing_hits.get(check_url)
 
