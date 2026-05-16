@@ -631,7 +631,7 @@ function LinkChecker() {
             </main>
 
             <section id="about" className="max-w-4xl mx-auto px-4 py-12 border-t border-gray-200 mt-4">
-                <h3 className="text-2xl font-serif font-bold text-gray-800 mb-4">About TrustPulse</h3>
+                <h3 className="text-2xl font-serif font-bold text-gray-800 mb-4">About TrvstPulse</h3>
                 <div className="grid sm:grid-cols-3 gap-6 text-sm text-gray-600">
                     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
@@ -662,7 +662,7 @@ function LinkChecker() {
                 <div className="max-w-4xl mx-auto px-4 py-8">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                         <div>
-                            <p className="font-serif font-bold text-gray-800 text-lg">TrustPulse</p>
+                            <p className="font-serif font-bold text-gray-800 text-lg">TrvstPulse</p>
                             <p className="text-xs text-gray-400 mt-1">Link safety & phishing detection tool</p>
                         </div>
                         <div className="flex flex-col gap-2 text-sm text-gray-600">
@@ -693,7 +693,7 @@ function LinkChecker() {
                         </div>
                     </div>
                     <p className="text-xs text-gray-400 mt-6 text-center">
-                        © {new Date().getFullYear()} TrustPulse. Built for link safety awareness.
+                        © {new Date().getFullYear()} TrvstPulse. Built for link safety awareness.
                     </p>
                 </div>
             </footer>
