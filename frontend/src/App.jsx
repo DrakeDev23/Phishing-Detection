@@ -4,7 +4,7 @@ import LinkChecker from "./components/LinkChecker";
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header name="TrustPulse" />
+      <Header name="TrvstPulse" />
       <LinkChecker />
     </div>
   );

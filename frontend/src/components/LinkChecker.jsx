@@ -424,7 +424,7 @@ function LinkChecker() {
         <div className="min-h-screen bg-white flex flex-col">
             <main className="max-w-4xl mx-auto px-4 py-10 w-full">
                 <div className="text-center mb-10">
-                    <h2 className="text-4xl font-serif font-bold text-gray-800 mb-3">TrustPulse</h2>
+                    <h2 className="text-4xl font-serif font-bold text-gray-800 mb-3">TrvstPulse</h2>
                     <p className="text-gray-500 text-lg">Check if your links are alive and safe</p>
                 </div>
 
