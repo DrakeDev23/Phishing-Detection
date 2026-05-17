@@ -645,19 +645,18 @@ function LinkChecker() {
                             <IconCheck className="h-4 w-4 text-green-600" />
                         </div>
                         <h4 className="font-bold text-gray-800 mb-1">Link Health Checks</h4>
-                        <p className="leading-relaxed">Verifies whether links are alive or broken, tracks redirects, and reports HTTP status codes — useful for auditing newsletters and docs.</p>
+                        <p className="leading-relaxed">Verifies whether links are alive or broken, tracks redirects, and reports HTTP status codes  useful for auditing newsletters and docs.</p>
                     </div>
                     <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                         <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
                             <IconSparkle className="h-4 w-4 text-purple-600" />
                         </div>
                         <h4 className="font-bold text-gray-800 mb-1">AI Analysis</h4>
-                        <p className="leading-relaxed">An AI layer summarizes risk across all scanned URLs, giving you a plain-language security overview alongside the raw results.</p>
+                        <p className="leading-relaxed">An AI layer summarizes risk across all scanned URLs, giving you a plain language security overview alongside the raw results.</p>
                     </div>
                 </div>
             </section>
 
-            {/* Footer */}
             <footer id="contact" className="border-t border-gray-200 bg-gray-50 mt-4">
                 <div className="max-w-4xl mx-auto px-4 py-8">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
