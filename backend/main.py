@@ -147,7 +147,6 @@ TRUSTED_DOMAINS: set[str] = {
     "steampowered.com", "steamcommunity.com", "roblox.com",
     "epicgames.com", "ea.com", "blizzard.com", "battle.net",
 }
-#new
 
 def is_trusted_domain(hostname: str) -> bool:
     """
