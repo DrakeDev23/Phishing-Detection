@@ -793,7 +793,6 @@ async def check_links(request: Request, body: LinkCheckRequest):
         },
     }
 
-#dasd
 @app.post("/extract-links", response_model=dict)
 @limiter.limit("20/minute")
 async def extract_links(request: Request, body: BulkTextRequest):
