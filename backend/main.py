@@ -318,7 +318,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
 
     if is_trusted_domain(hostname):
         return False, [], 0
-#python
+
     def add_flag(reason: str, weight: int) -> None:
         nonlocal score
         flags.append(reason)
