@@ -323,7 +323,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
         nonlocal score
         flags.append(reason)
         score += SEVERITY_WEIGHT.get(weight, 1)
-
+#hi
     try:
         ipaddress.ip_address(hostname)
         add_flag("URL uses a raw IP address instead of a domain name", 3)
