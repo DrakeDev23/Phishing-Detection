@@ -167,6 +167,7 @@ def is_trusted_domain(hostname: str) -> bool:
             return True
     return False
 
+#updated
 SUSPICIOUS_TLDS = {
     ".tk", ".ml", ".ga", ".cf", ".gq", ".xyz", ".top", ".club",
     ".online", ".site", ".website", ".pw",
