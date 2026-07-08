@@ -3,6 +3,18 @@ import { useState } from "react";
 function Header(props) {
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const navItems = [
+        { label: "Home", href: "/" },
+        { label: "About", action: "about" },
+        { label: "Contact", action: "contact" },
+    ];
+
+    const navItemClasses =
+        "inline-flex items-center px-4 py-2 text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50 appearance-none border-0 bg-transparent font-inherit leading-none";
+
+    const mobileNavItemClasses =
+        "flex w-full items-center px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors appearance-none border-0 bg-transparent font-inherit leading-none text-left";
+
     const scrollTo = (id) => {
         const el = document.getElementById(id);
         if (el) {
@@ -29,24 +41,17 @@ function Header(props) {
                 </div>
 
                 <nav className="hidden md:block">
-                    <ul className="flex gap-1">
-                        {[
-                            { label: "Home", href: "/" },
-                            { label: "About", action: "about" },
-                            { label: "Contact", action: "contact" },
-                        ].map((item, idx) => (
-                            <li key={idx}>
+                    <ul className="flex gap-1 items-center">
+                        {navItems.map((item, idx) => (
+                            <li key={idx} className="flex">
                                 {item.href ? (
-                                    <a
-                                        href={item.href}
-                                        className="px-4 py-2 text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50"
-                                    >
+                                    <a href={item.href} className={navItemClasses}>
                                         {item.label}
                                     </a>
                                 ) : (
                                     <button
                                         onClick={() => scrollTo(item.action)}
-                                        className="px-4 py-2 text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50"
+                                        className={navItemClasses}
                                     >
                                         {item.label}
                                     </button>
@@ -80,24 +85,20 @@ function Header(props) {
             >
                 <nav className="bg-slate-800/50 backdrop-blur-md px-6 py-4 border-t border-slate-700/30">
                     <ul className="flex flex-col gap-2">
-                        {[
-                            { label: "Home", href: "/" },
-                            { label: "About", action: "about" },
-                            { label: "Contact", action: "contact" },
-                        ].map((item, idx) => (
+                        {navItems.map((item, idx) => (
                             <li key={idx}>
                                 {item.href ? (
-                                    <a
-                                        href={item.href}
+                                    
+                                    <a href={item.href}
                                         onClick={() => setMenuOpen(false)}
-                                        className="block px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                                        className={mobileNavItemClasses}
                                     >
                                         {item.label}
                                     </a>
                                 ) : (
                                     <button
                                         onClick={() => scrollTo(item.action)}
-                                        className="block w-full text-left px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                                        className={mobileNavItemClasses}
                                     >
                                         {item.label}
                                     </button>
