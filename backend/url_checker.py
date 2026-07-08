@@ -70,7 +70,6 @@ async def check_single_link(
                 heuristic_flags.append(f"[original URL] {f}")
         is_suspicious_heuristic = is_suspicious_heuristic or orig_suspicious
 
-        # Detect redirect chains between unknown domains
         orig_parsed = urlparse(url)
         redir_parsed = urlparse(redirect_url)
         orig_host = (orig_parsed.hostname or "").lower()
