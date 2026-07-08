@@ -166,11 +166,10 @@ function PhishingPanel({ phishing }) {
                     )}
 
                     {hasVT && (
-                        <div className={`flex items-start gap-3 p-3 rounded-lg border ${
-                            phishing.virustotal_summary?.includes("malicious") || phishing.virustotal_summary?.includes("suspicious")
+                        <div className={`flex items-start gap-3 p-3 rounded-lg border ${phishing.virustotal_summary?.includes("malicious") || phishing.virustotal_summary?.includes("suspicious")
                                 ? "bg-red-600/10 border-red-500/30"
                                 : "bg-slate-600/10 border-slate-500/30"
-                        }`}>
+                            }`}>
                             <Icons.Sparkle className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                             <div>
                                 <p className="text-xs font-bold text-slate-300">VirusTotal</p>
@@ -363,7 +362,7 @@ function LinkChecker() {
                         TrvstPulse
                     </h2>
                     <p className="text-lg text-slate-400 animate-fade-in">
-                        Enterprise-grade link security analysis
+                        Enterprise grade link security analysis
                     </p>
                 </div>
 
@@ -372,11 +371,10 @@ function LinkChecker() {
                         <button
                             key={mode}
                             onClick={() => setInputMode(mode)}
-                            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
-                                inputMode === mode
+                            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${inputMode === mode
                                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30"
                                     : "bg-slate-700/50 text-slate-400 hover:text-slate-300 border border-slate-600/30 hover:border-slate-500/30"
-                            }`}
+                                }`}
                         >
                             {mode === "manual" ? "Manual URLs" : "Bulk / Paste Text"}
                         </button>
@@ -487,11 +485,10 @@ function LinkChecker() {
                         </div>
 
                         {(summary.dangerous > 0 || summary.suspicious > 0) && (
-                            <div className={`p-4 rounded-xl border backdrop-blur-sm flex items-start gap-3 ${
-                                summary.dangerous > 0
+                            <div className={`p-4 rounded-xl border backdrop-blur-sm flex items-start gap-3 ${summary.dangerous > 0
                                     ? "bg-red-600/10 border-red-500/30"
                                     : "bg-amber-600/10 border-amber-500/30"
-                            }`}>
+                                }`}>
                                 {summary.dangerous > 0 ? (
                                     <Icons.Ban className="h-5 w-5 shrink-0 mt-0.5 text-red-400" />
                                 ) : (
