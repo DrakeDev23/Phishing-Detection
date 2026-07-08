@@ -12,43 +12,52 @@ function Header(props) {
     };
 
     return (
-        <header className="bg-blue-500 shadow-md shadow-gray-500 sticky top-0 z-50">
-            <div className="flex justify-between h-16 items-center p-5">
-                <div className="flex items-center gap-2">
-                    <img src="Logo.png" className="w-10 h-10 md:w-16 md:h-16" alt="Logo" />
-                    <h1 className="text-xl md:text-2xl font-serif font-bold text-white">
-                        {props.name}
-                    </h1>
+        <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/30 border-b border-slate-700/30">
+            <div className="flex justify-between h-16 items-center px-6 max-w-7xl mx-auto">
+                <div className="flex items-center gap-3 group cursor-pointer">
+                    <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:shadow-lg group-hover:shadow-blue-500/50 transition-all">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors">
+                            {props.name}
+                        </h1>
+                        <p className="text-xs text-slate-400">Security Check</p>
+                    </div>
                 </div>
 
                 <nav className="hidden md:block">
-                    <ul className="flex gap-5 text-xl text-white font-medium">
-                        <li>
-                            <a href="/" className="hover:text-blue-100 transition-colors">
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => scrollTo("about")}
-                                className="hover:text-blue-100 transition-colors cursor-pointer"
-                            >
-                                About
-                            </button>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => scrollTo("contact")}
-                                className="hover:text-blue-100 transition-colors cursor-pointer"
-                            >
-                                Contact
-                            </button>
-                        </li>
+                    <ul className="flex gap-1">
+                        {[
+                            { label: "Home", href: "/" },
+                            { label: "About", action: "about" },
+                            { label: "Contact", action: "contact" },
+                        ].map((item, idx) => (
+                            <li key={idx}>
+                                {item.href ? (
+                                    <a
+                                        href={item.href}
+                                        className="px-4 py-2 text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50"
+                                    >
+                                        {item.label}
+                                    </a>
+                                ) : (
+                                    <button
+                                        onClick={() => scrollTo(item.action)}
+                                        className="px-4 py-2 text-slate-300 hover:text-white transition-colors rounded-lg hover:bg-slate-700/50"
+                                    >
+                                        {item.label}
+                                    </button>
+                                )}
+                            </li>
+                        ))}
                     </ul>
                 </nav>
 
                 <button
-                    className="md:hidden text-white focus:outline-none"
+                    className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/50 transition-all"
                     onClick={() => setMenuOpen(!menuOpen)}
                     aria-label="Toggle menu"
                 >
@@ -65,36 +74,36 @@ function Header(props) {
             </div>
 
             <div
-                className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${menuOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+                    menuOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+                }`}
             >
-                <nav className="bg-blue-600 px-5 pb-4 pt-1">
-                    <ul className="flex flex-col gap-3 text-lg text-white font-medium">
-                        <li>
-                            <a
-                                href="/"
-                                className="block hover:text-blue-100 transition-colors"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                Home
-                            </a>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => scrollTo("about")}
-                                className="block w-full text-left hover:text-blue-100 transition-colors"
-                            >
-                                About
-                            </button>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => scrollTo("contact")}
-                                className="block w-full text-left hover:text-blue-100 transition-colors"
-                            >
-                                Contact
-                            </button>
-                        </li>
+                <nav className="bg-slate-800/50 backdrop-blur-md px-6 py-4 border-t border-slate-700/30">
+                    <ul className="flex flex-col gap-2">
+                        {[
+                            { label: "Home", href: "/" },
+                            { label: "About", action: "about" },
+                            { label: "Contact", action: "contact" },
+                        ].map((item, idx) => (
+                            <li key={idx}>
+                                {item.href ? (
+                                    <a
+                                        href={item.href}
+                                        onClick={() => setMenuOpen(false)}
+                                        className="block px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                                    >
+                                        {item.label}
+                                    </a>
+                                ) : (
+                                    <button
+                                        onClick={() => scrollTo(item.action)}
+                                        className="block w-full text-left px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                                    >
+                                        {item.label}
+                                    </button>
+                                )}
+                            </li>
+                        ))}
                     </ul>
                 </nav>
             </div>
