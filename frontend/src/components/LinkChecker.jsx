@@ -6,7 +6,6 @@ const MAX_BULK_LENGTH = 50000;
 
 function sanitizeUrl(raw) {
     let url = raw.trim();
-    /* eslint-disable-next-line no-control-regex */
     url = url.replace(/[\x00-\x1f\x7f]/g, "");
     if (/^(javascript|data|file|vbscript):/i.test(url)) return null;
     if (url.length > MAX_URL_LENGTH) return null;
@@ -266,7 +265,6 @@ function LinkChecker() {
     };
 
     const updateUrl = (index, value) => {
-        /* eslint-disable-next-line no-control-regex */
         const clean = value.replace(/[\x00-\x1f\x7f]/g, "");
         const updated = [...urls];
         updated[index] = clean.slice(0, MAX_URL_LENGTH);
@@ -521,7 +519,6 @@ function LinkChecker() {
                             </div>
                         )}
 
-                        {/* AI Analysis */}
                         {summary.ai_analysis && (
                             <div className="rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 overflow-hidden">
                                 <button
@@ -584,7 +581,6 @@ function LinkChecker() {
                 </section>
             )}
 
-            {/* Footer */}
             <footer id="contact" className="border-t border-slate-700/30 bg-slate-900/50 py-8 px-4">
                 <div className="max-w-5xl mx-auto text-center text-xs text-slate-400">
                     <p>© {new Date().getFullYear()} TrvstPulse. Advanced link security analysis.</p>
