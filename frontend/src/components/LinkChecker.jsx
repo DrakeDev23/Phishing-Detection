@@ -136,7 +136,7 @@ function PhishingPanel({ phishing }) {
     const hasVT = phishing.virustotal_summary;
 
     return (
-        <div className={`mt-4 rounded-xl border ${cfg.border} bg-gradient-to-br ${cfg.gradient} overflow-hidden`}>
+        <div className={`mt-4 rounded-xl border ${cfg.border} bg-linear-to-br ${cfg.gradient} overflow-hidden`}>
             <button
                 onClick={() => setExpanded(!expanded)}
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-all"
@@ -205,7 +205,7 @@ function ResultCard({ result }) {
     const cfg = getRiskConfig(riskLevel);
 
     return (
-        <div className={`rounded-xl border ${cfg.border} bg-gradient-to-br ${cfg.gradient} p-4 backdrop-blur-sm hover:border-slate-400/30 transition-all group`}>
+        <div className={`rounded-xl border ${cfg.border} bg-linear-to-br ${cfg.gradient} p-4 backdrop-blur-sm hover:border-slate-400/30 transition-all group`}>
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                     <p className="font-mono text-sm text-slate-100 truncate font-medium group-hover:text-blue-300 transition-colors">{result.url}</p>
@@ -479,7 +479,7 @@ function LinkChecker() {
                                 { label: "Suspicious", value: summary.suspicious ?? 0, gradient: "from-amber-600/20 to-orange-600/20", border: "border-amber-500/30" },
                                 { label: "Dangerous", value: summary.dangerous ?? 0, gradient: "from-red-600/20 to-pink-600/20", border: "border-red-500/30" },
                             ].map((stat, idx) => (
-                                <div key={idx} className={`rounded-xl border ${stat.border} bg-gradient-to-br ${stat.gradient} p-4 text-center backdrop-blur-sm`}>
+                                <div key={idx} className={`rounded-xl border ${stat.border} bg-linear-to-br ${stat.gradient} p-4 text-center backdrop-blur-sm`}>
                                     <p className="text-3xl font-bold text-slate-100">{stat.value}</p>
                                     <p className="text-xs text-slate-400 font-medium mt-2 uppercase tracking-wider">{stat.label}</p>
                                 </div>
@@ -520,7 +520,7 @@ function LinkChecker() {
                         )}
 
                         {summary.ai_analysis && (
-                            <div className="rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 overflow-hidden">
+                            <div className="rounded-xl border border-blue-500/30 bg-linear-to-br from-blue-600/10 to-cyan-600/10 overflow-hidden">
                                 <button
                                     onClick={() => setAiExpanded(!aiExpanded)}
                                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-all"
@@ -569,7 +569,7 @@ function LinkChecker() {
                                 { icon: Icons.Sparkle, title: "AI Analysis", desc: "Plain language security summaries powered by Gemini AI" },
                             ].map((feature, idx) => (
                                 <div key={idx} className="glass-dark p-6 hover:border-slate-500/50 transition-all">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center mb-4 border border-blue-500/30">
+                                    <div className="w-10 h-10 bg-linear-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center mb-4 border border-blue-500/30">
                                         <feature.icon className="h-5 w-5 text-blue-300" />
                                     </div>
                                     <h4 className="font-bold text-slate-100 mb-2">{feature.title}</h4>

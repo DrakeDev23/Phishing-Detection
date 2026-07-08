@@ -29,7 +29,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     except Exception:
         decoded_url = full_url_lower
 
-    # Trusted domains bypass all heuristics
     if is_trusted_domain(hostname):
         return False, [], 0
 
@@ -38,7 +37,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
         flags.append(reason)
         score += SEVERITY_WEIGHT.get(weight, 1)
 
-    # Direct IP address check
     try:
         import ipaddress
         ipaddress.ip_address(hostname)
@@ -49,7 +47,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     parts = hostname.split(".")
     bare_host = hostname.lstrip("www.")
 
-    # Excessive subdomains
     subdomain_depth = len(parts) - 2
     if subdomain_depth >= 4:
         add_flag(f"Excessive subdomains ({subdomain_depth} levels deep) — classic domain-disguise technique", 3)
@@ -61,18 +58,15 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
         if sensitive_in_subdomain:
             add_flag(f"Sensitive keyword in deep subdomain ({hostname})", 2)
 
-    # Suspicious TLDs
     for tld in SUSPICIOUS_TLDS:
         if hostname.endswith(tld):
             add_flag(f"High-risk top-level domain: {tld}", 2)
             break
 
-    # URL Shorteners
     bare = hostname.lstrip("www.")
     if bare in URL_SHORTENERS:
         add_flag(f"URL shortener detected ({bare}) — real destination is hidden", 2)
 
-    # Brand spoofing detection
     for brand_name, pattern in BRAND_IN_DOMAIN_PATTERNS:
         if brand_name in hostname:
             official_domains = BRAND_OFFICIAL_DOMAINS.get(brand_name, [f"{brand_name}.com"])
@@ -83,14 +77,12 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
                 )
                 break
 
-    # URL length check
     url_len = len(url)
     if url_len > 200:
         add_flag(f"Very long URL ({url_len} chars) — may be obfuscating destination", 2)
     elif url_len > 150:
         add_flag(f"Unusually long URL ({url_len} chars)", 1)
 
-    # Phishing pattern matching
     seen_patterns: set[str] = set()
     for pattern, reason, weight in PHISHING_PATTERNS:
         if reason in seen_patterns:
@@ -99,7 +91,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
             add_flag(reason, weight)
             seen_patterns.add(reason)
 
-    # Sensitive path with suspicious TLD
     sensitive_path_keywords = [
         "login", "signin", "verify", "account", "secure", "update",
         "password", "credential", "confirm", "auth", "token", "reset",
@@ -111,7 +102,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     if has_sensitive_path and has_suspicious_tld:
         add_flag("Sensitive path/query keywords (login/verify/account) paired with high-risk TLD", 2)
 
-    # Homoglyph attacks in brand SLD
     sld = parts[-2] if len(parts) >= 2 else ""
     homoglyph_patterns = [
         (r"[a-z]0[a-z]", "Digit '0' possibly substituted for letter 'o'"),
@@ -123,11 +113,9 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
             if re.search(pat, sld):
                 add_flag(f"Possible homoglyph/lookalike attack in SLD '{sld}': {msg}", 2)
 
-    # Random-looking domain
     if re.match(r"^[a-z]{2,5}\d{3,5}[a-z]{1,4}$", sld):
         add_flag(f"Domain SLD looks randomly generated ('{sld}') — common in phishing infrastructure", 2)
 
-    # Giveaway keywords
     giveaway_keywords = [
         r"\d{2,4}gb", r"\d{1,2}tb", "free-storage", "free-data",
         "labor-day", "labour-day", "giveaway", "freebie",
@@ -138,27 +126,23 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
             add_flag(f"Free giveaway/storage lure keyword detected: '{kw}'", 3)
             break
 
-    # Numeric fragments and query params
     if fragment and re.match(r"^\d{10,}$", fragment):
         add_flag(f"Numeric-only URL fragment (#{fragment[:20]}) — campaign tracking ID", 1)
 
     if query and re.match(r"^[a-z0-9]+=\d+$", query):
         add_flag("Query string is a single numeric parameter — likely campaign tracking", 1)
 
-    # PHP/ASPX form pages
     if re.search(r"\.(php|aspx|asp)$", path):
         php_suspicious_paths = ["registration", "signup", "register", "login", "verify", "confirm", "account"]
         if any(kw in path for kw in php_suspicious_paths):
             add_flag("PHP/ASPX form page with sensitive keyword on unrecognized domain — likely credential harvesting", 3)
 
-    # Financial TLDs
     financial_tlds = {".cash", ".finance", ".capital", ".investments", ".trading", ".exchange", ".money", ".fund"}
     for ftld in financial_tlds:
         if hostname.endswith(ftld):
             add_flag(f"Domain uses financial TLD ({ftld}) — commonly used in investment/crypto scams", 3)
             break
 
-    # Brand-hyphen patterns
     brand_hyphen_pattern = r"^(" + "|".join(KNOWN_BRANDS) + r")-[a-z0-9]+"
     action_hyphen_pattern = r"^[a-z0-9]+-(login|secure|verify|account|update|confirm|signin|support)-?(" + "|".join(KNOWN_BRANDS) + r")"
     if re.search(brand_hyphen_pattern, sld) or re.search(action_hyphen_pattern, sld) or \
