@@ -1,11 +1,11 @@
 import { Icons } from "./Icons";
 
-const CONTACT_EMAIL = "hello@trvstpulse.com";
+const CONTACT_EMAIL = "maccogoth@.com";
 
 const socialLinks = [
-    { icon: Icons.Facebook, label: "Facebook", href: "https://facebook.com/trvstpulse" },
-    { icon: Icons.Github, label: "GitHub", href: "https://github.com/trvstpulse" },
-    { icon: Icons.Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/trvstpulse" },
+    { icon: Icons.Facebook, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
+    { icon: Icons.Github, label: "GitHub", href: "https://github.com/DrakeDev23" },
+    { icon: Icons.Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/zedrick-dwyn-manguilimotan-85540b3b2/" },
 ];
 
 function Contact() {
