@@ -2,15 +2,19 @@ import { useState } from "react";
 import {
     ArrowRight,
     Ban,
-    ChartNoAxesColumnIncreasing,
     ChevronDown,
     CircleCheck,
     CircleX,
     Clipboard,
+    HeartPulse,
     Link,
+    Link2Off,
+    ListChecks,
     LoaderCircle,
     Search,
     ShieldCheck,
+    ShieldAlert,
+    ShieldQuestionMark,
     Sparkles,
     SquarePen,
     TriangleAlert,
@@ -472,11 +476,11 @@ function LinkChecker() {
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                             {[
-                                { label: "Total", value: summary.total, icon: <ChartNoAxesColumnIncreasing className="h-6 w-6 text-cyan-400" /> },
-                                { label: "Alive", value: summary.alive, icon: <CircleCheck className="h-6 w-6 text-emerald-400" /> },
-                                { label: "Broken", value: summary.dead, icon: <CircleX className="h-6 w-6 text-red-400" /> },
-                                { label: "Suspicious", value: summary.suspicious ?? 0, icon: <TriangleAlert className="h-6 w-6 text-amber-400" /> },
-                                { label: "Dangerous", value: summary.dangerous ?? 0, icon: <Ban className="h-6 w-6 text-red-500" /> },
+                                { label: "Total", value: summary.total, icon: <ListChecks className="h-6 w-6 text-cyan-400" /> },
+                                { label: "Alive", value: summary.alive, icon: <HeartPulse className="h-6 w-6 text-emerald-400" /> },
+                                { label: "Broken", value: summary.dead, icon: <Link2Off className="h-6 w-6 text-red-400" /> },
+                                { label: "Suspicious", value: summary.suspicious ?? 0, icon: <ShieldQuestionMark className="h-6 w-6 text-amber-400" /> },
+                                { label: "Dangerous", value: summary.dangerous ?? 0, icon: <ShieldAlert className="h-6 w-6 text-red-500" /> },
                             ].map((stat, idx) => (
                                 <div key={idx} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-6 rounded-lg text-center hover:border-slate-600/80 transition-all shadow-md">
                                     <div className="flex justify-center mb-2">{stat.icon}</div>
