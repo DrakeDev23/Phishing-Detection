@@ -22,8 +22,6 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     query = (parsed.query or "").lower()
     full_url_lower = url.lower()
 
-    # Trusted domains can host compromised pages, open redirects, and user content.
-    # They remain useful context elsewhere, but must not bypass phishing analysis.
 
     try:
         decoded_url = unquote(full_url_lower)
@@ -64,8 +62,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
 
     for tld in SUSPICIOUS_TLDS:
         if hostname.endswith(tld):
-            # A TLD alone is weak evidence. It becomes meaningful when paired with
-            # a credential lure or another independent signal below.
+        
             add_flag(f"Higher-risk top-level domain: {tld}", 1)
             break
 

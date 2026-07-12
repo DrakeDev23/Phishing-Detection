@@ -98,7 +98,6 @@ async def validate_url_target(url: str) -> tuple[bool, str]:
         if not hostname:
             return False, "Blocked: URL has no valid host"
 
-        # Accessing ``parsed.port`` also rejects invalid or out-of-range ports.
         port = parsed.port
         if is_private_ip(hostname):
             return False, "Blocked: URL points to internal/private network"
