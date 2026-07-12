@@ -1,6 +1,6 @@
 import { Icons } from "./Icons";
 
-const CONTACT_EMAIL = "maccogoth@.com";
+const CONTACT_EMAIL = "maccogoth@gmail.com";
 
 const socialLinks = [
     { icon: Icons.Facebook, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
