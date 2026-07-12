@@ -77,16 +77,16 @@ function RiskBadge({ riskLevel }) {
 function StatusBadge({ isAlive, statusCode }) {
     if (isAlive) {
         return (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-[#6C93FF] bg-[#141B2E] border border-[#2B3B63]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6C93FF] inline-block" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                 {statusCode} OK
             </span>
         );
     }
     return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-[#8B93A7] bg-[#171C27] border border-[#262D3D]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8B93A7] inline-block" />
-            {statusCode || "No Response"}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-red-400 bg-red-500/10 border border-red-500/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block" />
+            {statusCode || "BROKEN"}
         </span>
     );
 }
