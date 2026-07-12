@@ -1,11 +1,11 @@
-import { Icons } from "./Icons";
+import { BriefcaseBusiness, Code2, Mail, MessageCircle } from "lucide-react";
 
 const CONTACT_EMAIL = "maccogoth@gmail.com";
 
 const socialLinks = [
-    { icon: Icons.Facebook, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
-    { icon: Icons.Github, label: "GitHub", href: "https://github.com/DrakeDev23" },
-    { icon: Icons.Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/zedrick-dwyn-manguilimotan-85540b3b2/" },
+    { icon: MessageCircle, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
+    { icon: Code2, label: "GitHub", href: "https://github.com/DrakeDev23" },
+    { icon: BriefcaseBusiness, label: "LinkedIn", href: "https://www.linkedin.com/in/zedrick-dwyn-manguilimotan-85540b3b2/" },
 ];
 
 function Contact() {
@@ -20,7 +20,7 @@ function Contact() {
                     href={`mailto:${CONTACT_EMAIL}`}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-[#6C93FF] text-[#6C93FF] text-sm font-medium font-mono hover:bg-[#6C93FF] hover:text-[#10141C] transition-colors"
                 >
-                    <Icons.Mail className="h-4 w-4" />
+                    <Mail className="h-4 w-4" />
                     {CONTACT_EMAIL}
                 </a>
 

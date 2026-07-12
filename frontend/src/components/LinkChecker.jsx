@@ -1,5 +1,20 @@
 import { useState } from "react";
-import { Icons } from "./Icons";
+import {
+    ArrowRight,
+    Ban,
+    ChartNoAxesColumnIncreasing,
+    ChevronDown,
+    CircleCheck,
+    CircleX,
+    Clipboard,
+    Link,
+    LoaderCircle,
+    Search,
+    ShieldCheck,
+    Sparkles,
+    SquarePen,
+    TriangleAlert,
+} from "lucide-react";
 import About from "./About";
 import Contact from "./Contact";
 
@@ -39,7 +54,7 @@ function getRiskConfig(riskLevel) {
                 bg: "bg-red-500/10",
                 badge: "bg-red-500/10 text-red-400 border border-red-500/25",
                 label: "DANGEROUS",
-                icon: <Icons.Ban className="h-4 w-4" />,
+                icon: <Ban className="h-4 w-4" />,
             };
         case "suspicious":
             return {
@@ -49,7 +64,7 @@ function getRiskConfig(riskLevel) {
                 bg: "bg-amber-500/10",
                 badge: "bg-amber-500/10 text-amber-400 border border-amber-500/25",
                 label: "SUSPICIOUS",
-                icon: <Icons.Warning className="h-4 w-4" />,
+                icon: <TriangleAlert className="h-4 w-4" />,
             };
         default:
             return {
@@ -59,7 +74,7 @@ function getRiskConfig(riskLevel) {
                 bg: "bg-emerald-500/10",
                 badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25",
                 label: "SAFE",
-                icon: <Icons.Check className="h-4 w-4" />,
+                icon: <CircleCheck className="h-4 w-4" />,
             };
     }
 }
@@ -106,7 +121,7 @@ function PhishingPanel({ phishing }) {
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
             >
                 <div className="flex items-center gap-3">
-                    <Icons.Shield className="h-4 w-4 text-[#8B93A7]" />
+                    <ShieldCheck className="h-4 w-4 text-[#8B93A7]" />
                     <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#E7EAF0]">
                         Phishing Analysis
                     </span>
@@ -114,14 +129,14 @@ function PhishingPanel({ phishing }) {
                         Score: {phishing.phishing_score ?? "—"}
                     </span>
                 </div>
-                <Icons.ChevronDown className={`h-4 w-4 text-[#8B93A7] transition-transform ${expanded ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-4 w-4 text-[#8B93A7] transition-transform ${expanded ? "rotate-180" : ""}`} />
             </button>
 
             {expanded && (
                 <div className="px-4 py-4 space-y-3 border-t border-[#262D3D]">
                     {hasGSB && (
                         <div className="flex items-start gap-3 p-3 rounded-md bg-red-500/10 border border-red-500/25">
-                            <Icons.Ban className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+                            <Ban className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
                             <div>
                                 <p className="text-xs font-semibold text-red-400">Google Safe Browsing</p>
                                 <p className="text-xs text-red-400/80 mt-0.5">{phishing.safe_browsing_threat}</p>
@@ -134,7 +149,7 @@ function PhishingPanel({ phishing }) {
                             ? "bg-red-500/10 border-red-500/25"
                             : "bg-[#171C27] border-[#262D3D]"
                             }`}>
-                            <Icons.Sparkle className="h-4 w-4 text-[#8B93A7] mt-0.5 shrink-0" />
+                            <Sparkles className="h-4 w-4 text-[#8B93A7] mt-0.5 shrink-0" />
                             <div>
                                 <p className="text-xs font-semibold text-[#E7EAF0]">VirusTotal</p>
                                 <p className="text-xs text-[#8B93A7] mt-0.5">{phishing.virustotal_summary}</p>
@@ -183,14 +198,14 @@ function ResultCard({ result }) {
 
             {result.redirect_url && (
                 <p className="text-xs text-[#8B93A7] mb-2 flex items-center gap-1">
-                    <Icons.Arrow className="h-3 w-3 shrink-0" />
+                    <ArrowRight className="h-3 w-3 shrink-0" />
                     Redirected to: <span className="font-mono truncate text-[#E7EAF0]">{result.redirect_url}</span>
                 </p>
             )}
 
             {result.error && (
                 <p className="text-xs text-red-400 mb-2 flex items-center gap-1">
-                    <Icons.Warning className="h-3 w-3 shrink-0" />
+                    <TriangleAlert className="h-3 w-3 shrink-0" />
                     {result.error}
                 </p>
             )}
@@ -204,7 +219,7 @@ function ResultCard({ result }) {
             {result.ai_analysis && (
                 <div className="mt-4 p-3 rounded-md bg-[#141B2E] border border-[#2B3B63] text-xs text-[#E7EAF0] whitespace-pre-wrap leading-relaxed">
                     <p className="font-semibold mb-2 flex items-center gap-1.5 text-[#6C93FF]">
-                        <Icons.Sparkle className="h-3.5 w-3.5" />
+                        <Sparkles className="h-3.5 w-3.5" />
                         AI Analysis
                     </p>
                     {result.ai_analysis}
@@ -324,7 +339,7 @@ function LinkChecker() {
                 <div className="text-center mb-16">
                     <div className="flex items-center justify-center gap-2 mb-4">
                         <div className="h-px w-8 bg-gradient-to-r from-transparent to-cyan-500"></div>
-                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2"><Icons.Shield className="h-4 w-4" /> Advanced Security Scanner</p>
+                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Advanced Security Scanner</p>
                         <div className="h-px w-8 bg-gradient-to-l from-transparent to-cyan-500"></div>
                     </div>
                     <h2 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-cyan-300 mb-4 tracking-tight">
@@ -348,11 +363,11 @@ function LinkChecker() {
                         >
                             {mode === "manual" ? (
                                 <>
-                                    <Icons.Pencil className="h-4 w-4" /> Manual URLs
+                                    <SquarePen className="h-4 w-4" /> Manual URLs
                                 </>
                             ) : (
                                 <>
-                                    <Icons.Clipboard className="h-4 w-4" /> Bulk / Paste Text
+                                    <Clipboard className="h-4 w-4" /> Bulk / Paste Text
                                 </>
                             )}
                         </button>
@@ -362,9 +377,9 @@ function LinkChecker() {
                 <div className="border border-slate-700/50 bg-gradient-to-br from-slate-900/80 to-slate-900/50 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-xl">
                     <label className="block text-sm font-bold text-slate-200 mb-4 uppercase tracking-wide">
                         {inputMode === "manual" ? (
-                            <span className="flex items-center gap-2"><Icons.Link className="h-4 w-4" /> Enter URLs (max 20)</span>
+                            <span className="flex items-center gap-2"><Link className="h-4 w-4" /> Enter URLs (max 20)</span>
                         ) : (
-                            <span className="flex items-center gap-2"><Icons.Clipboard className="h-4 w-4" /> Paste any text</span>
+                            <span className="flex items-center gap-2"><Clipboard className="h-4 w-4" /> Paste any text</span>
                         )}
                     </label>
 
@@ -388,7 +403,7 @@ function LinkChecker() {
                                                 aria-label="Remove URL"
                                                 className="px-3 py-3 rounded-md text-[#8B93A7] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                                             >
-                                                <Icons.Close className="h-4 w-4" />
+                                                <CircleX className="h-4 w-4" />
                                             </button>
                                         )}
                                     </div>
@@ -419,7 +434,7 @@ function LinkChecker() {
 
                     {error && (
                         <div className="mt-4 p-4 bg-red-500/10 border border-red-500/25 rounded-md text-red-400 text-sm flex items-center gap-3">
-                            <Icons.Warning className="h-4 w-4 shrink-0" />
+                            <TriangleAlert className="h-4 w-4 shrink-0" />
                             {error}
                         </div>
                     )}
@@ -432,12 +447,12 @@ function LinkChecker() {
                         >
                             {loading ? (
                                 <>
-                                    <Icons.Spinner className="h-5 w-5 animate-spin" />
+                                    <LoaderCircle className="h-5 w-5 animate-spin" />
                                     Scanning...
                                 </>
                             ) : (
                                 <>
-                                    <Icons.Shield className="h-5 w-5" />
+                                    <ShieldCheck className="h-5 w-5" />
                                     Scan Now
                                 </>
                             )}
@@ -457,11 +472,11 @@ function LinkChecker() {
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                             {[
-                                { label: "Total", value: summary.total, icon: <Icons.BarChart className="h-6 w-6 text-cyan-400" /> },
-                                { label: "Alive", value: summary.alive, icon: <Icons.Check className="h-6 w-6 text-emerald-400" /> },
-                                { label: "Broken", value: summary.dead, icon: <Icons.Close className="h-6 w-6 text-red-400" /> },
-                                { label: "Suspicious", value: summary.suspicious ?? 0, icon: <Icons.Warning className="h-6 w-6 text-amber-400" /> },
-                                { label: "Dangerous", value: summary.dangerous ?? 0, icon: <Icons.Ban className="h-6 w-6 text-red-500" /> },
+                                { label: "Total", value: summary.total, icon: <ChartNoAxesColumnIncreasing className="h-6 w-6 text-cyan-400" /> },
+                                { label: "Alive", value: summary.alive, icon: <CircleCheck className="h-6 w-6 text-emerald-400" /> },
+                                { label: "Broken", value: summary.dead, icon: <CircleX className="h-6 w-6 text-red-400" /> },
+                                { label: "Suspicious", value: summary.suspicious ?? 0, icon: <TriangleAlert className="h-6 w-6 text-amber-400" /> },
+                                { label: "Dangerous", value: summary.dangerous ?? 0, icon: <Ban className="h-6 w-6 text-red-500" /> },
                             ].map((stat, idx) => (
                                 <div key={idx} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-6 rounded-lg text-center hover:border-slate-600/80 transition-all shadow-md">
                                     <div className="flex justify-center mb-2">{stat.icon}</div>
@@ -477,9 +492,9 @@ function LinkChecker() {
                                 : "bg-amber-500/10 border-amber-500/25"
                                 }`}>
                                 {summary.dangerous > 0 ? (
-                                    <Icons.Ban className="h-5 w-5 shrink-0 mt-0.5 text-red-400" />
+                                    <Ban className="h-5 w-5 shrink-0 mt-0.5 text-red-400" />
                                 ) : (
-                                    <Icons.Warning className="h-5 w-5 shrink-0 mt-0.5 text-amber-400" />
+                                    <TriangleAlert className="h-5 w-5 shrink-0 mt-0.5 text-amber-400" />
                                 )}
                                 <div>
                                     <p className={`font-semibold text-sm ${summary.dangerous > 0 ? "text-red-400" : "text-amber-400"}`}>
@@ -496,7 +511,7 @@ function LinkChecker() {
 
                         {results.skipped?.length > 0 && (
                             <div className="p-4 bg-amber-500/10 border border-amber-500/25 rounded-md text-amber-400 text-sm flex items-center gap-3">
-                                <Icons.Warning className="h-4 w-4 shrink-0" />
+                                <TriangleAlert className="h-4 w-4 shrink-0" />
                                 <span>
                                     <strong>{results.skipped.length} URL(s) skipped</strong> — invalid format or blocked.
                                 </span>
@@ -510,10 +525,10 @@ function LinkChecker() {
                                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
                                 >
                                     <span className="flex items-center gap-2 text-sm font-semibold text-[#6C93FF]">
-                                        <Icons.Sparkle className="h-4 w-4" />
+                                        <Sparkles className="h-4 w-4" />
                                         AI Security Analysis
                                     </span>
-                                    <Icons.ChevronDown className={`h-4 w-4 text-[#6C93FF] transition-transform ${aiExpanded ? "rotate-180" : ""}`} />
+                                    <ChevronDown className={`h-4 w-4 text-[#6C93FF] transition-transform ${aiExpanded ? "rotate-180" : ""}`} />
                                 </button>
                                 {aiExpanded && (
                                     <div className="px-4 py-4 text-sm text-[#E7EAF0] whitespace-pre-wrap leading-relaxed border-t border-[#2B3B63]">
@@ -525,7 +540,7 @@ function LinkChecker() {
 
                         <div>
                             <h3 className="text-sm font-mono font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <Icons.Search className="h-5 w-5" /> Scan Results
+                                <Search className="h-5 w-5" /> Scan Results
                             </h3>
                             <div className="space-y-3">
                                 {[...results.results]

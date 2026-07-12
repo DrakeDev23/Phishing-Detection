@@ -1,9 +1,9 @@
-import { Icons } from "./Icons";
+import { CircleCheck, ShieldCheck, Sparkles } from "lucide-react";
 
 const features = [
-    { icon: Icons.Shield, title: "Phishing Detection", desc: "Heuristic analysis, Google Safe Browsing, and VirusTotal integration" },
-    { icon: Icons.Check, title: "Link Health", desc: "Verify if links are alive or broken with HTTP status tracking" },
-    { icon: Icons.Sparkle, title: "AI Analysis", desc: "Plain language security summaries powered by  AI" },
+    { icon: ShieldCheck, title: "Phishing Detection", desc: "Heuristic analysis, Google Safe Browsing, and VirusTotal integration" },
+    { icon: CircleCheck, title: "Link Health", desc: "Verify if links are alive or broken with HTTP status tracking" },
+    { icon: Sparkles, title: "AI Analysis", desc: "Plain language security summaries powered by  AI" },
 ];
 
 function About() {

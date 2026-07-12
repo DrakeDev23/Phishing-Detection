@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Menu, ShieldCheck, X } from "lucide-react";
 
 function Header(props) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -28,10 +29,7 @@ function Header(props) {
             <div className="flex justify-between h-16 items-center px-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 flex items-center justify-center rounded-md border border-[#6C93FF] text-[#6C93FF]">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12l2 2 4-4" />
-                        </svg>
+                        <ShieldCheck className="w-4 h-4" strokeWidth={1.75} />
                     </div>
                     <div>
                         <h1 className="text-lg font-serif font-bold text-[#E7EAF0] leading-tight">
@@ -68,13 +66,9 @@ function Header(props) {
                     aria-label="Toggle menu"
                 >
                     {menuOpen ? (
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-6 h-6" strokeWidth={1.75} />
                     ) : (
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
+                        <Menu className="w-6 h-6" strokeWidth={1.75} />
                     )}
                 </button>
             </div>
