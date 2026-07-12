@@ -168,7 +168,7 @@ function ResultCard({ result }) {
     const cfg = getRiskConfig(riskLevel);
 
     return (
-        <div className={`rounded-md border border-[#262D3D] border-l-4 ${cfg.accent} bg-[#171C27] p-4 hover:border-[#2B3B63] transition-colors`}>
+        <div className={`rounded-md border-2 border-l-4 ${cfg.border} ${cfg.accent} bg-[#171C27] p-4 hover:opacity-90 transition-colors`}>
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                     <p className="font-mono text-sm text-[#E7EAF0] truncate font-medium">{result.url}</p>
