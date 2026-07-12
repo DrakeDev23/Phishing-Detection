@@ -10,10 +10,10 @@ function Header(props) {
     ];
 
     const navItemClasses =
-        "inline-flex items-center px-3 py-2 text-sm font-medium text-[#5B6B85] hover:text-[#0B1220] border-b-2 border-transparent hover:border-[#1B4DFF] transition-colors appearance-none bg-transparent font-inherit leading-none";
+        "inline-flex items-center px-3 py-2 text-sm font-medium text-[#8B93A7] hover:text-[#E7EAF0] border-b-2 border-transparent hover:border-[#6C93FF] transition-colors appearance-none bg-transparent font-inherit leading-none";
 
     const mobileNavItemClasses =
-        "flex w-full items-center px-4 py-3 text-sm font-medium text-[#5B6B85] hover:text-[#0B1220] hover:bg-[#F1F5FF] border-l-2 border-transparent hover:border-[#1B4DFF] transition-colors appearance-none bg-transparent font-inherit leading-none text-left";
+        "flex w-full items-center px-4 py-3 text-sm font-medium text-[#8B93A7] hover:text-[#E7EAF0] hover:bg-white/5 border-l-2 border-transparent hover:border-[#6C93FF] transition-colors appearance-none bg-transparent font-inherit leading-none text-left";
 
     const scrollTo = (id) => {
         const el = document.getElementById(id);
@@ -24,20 +24,20 @@ function Header(props) {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-white border-b border-[#E2E8F5]">
+        <header className="sticky top-0 z-50 bg-[#10141C] border-b border-[#262D3D]">
             <div className="flex justify-between h-16 items-center px-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 flex items-center justify-center rounded-md border border-[#1B4DFF] text-[#1B4DFF]">
+                    <div className="w-9 h-9 flex items-center justify-center rounded-md border border-[#6C93FF] text-[#6C93FF]">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 12l2 2 4-4" />
                         </svg>
                     </div>
                     <div>
-                        <h1 className="text-lg font-serif font-bold text-[#0B1220] leading-tight">
+                        <h1 className="text-lg font-serif font-bold text-[#E7EAF0] leading-tight">
                             {props.name}
                         </h1>
-                        <p className="text-[11px] font-mono uppercase tracking-wider text-[#5B6B85]">Security Check</p>
+                        <p className="text-[11px] font-mono uppercase tracking-wider text-[#8B93A7]">Security Check</p>
                     </div>
                 </div>
 
@@ -63,7 +63,7 @@ function Header(props) {
                 </nav>
 
                 <button
-                    className="md:hidden p-2 rounded-md text-[#5B6B85] hover:text-[#0B1220] hover:bg-[#F1F5FF] transition-colors"
+                    className="md:hidden p-2 rounded-md text-[#8B93A7] hover:text-[#E7EAF0] hover:bg-white/5 transition-colors"
                     onClick={() => setMenuOpen(!menuOpen)}
                     aria-label="Toggle menu"
                 >
@@ -83,7 +83,7 @@ function Header(props) {
                 className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${menuOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
                     }`}
             >
-                <nav className="bg-white px-2 py-2 border-t border-[#E2E8F5]">
+                <nav className="bg-[#10141C] px-2 py-2 border-t border-[#262D3D]">
                     <ul className="flex flex-col gap-1">
                         {navItems.map((item, idx) => (
                             <li key={idx}>

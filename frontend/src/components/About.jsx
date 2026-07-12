@@ -8,17 +8,18 @@ const features = [
 
 function About() {
     return (
-        <section id="about" className="border-t border-slate-700/30 py-12 px-4 bg-slate-900/30">
+        <section id="about" className="border-t border-[#262D3D] bg-[#10141C] py-16 px-4">
             <div className="max-w-5xl mx-auto">
-                <h3 className="text-2xl font-bold text-slate-100 mb-8 text-center">Why Use TrvstPulse?</h3>
-                <div className="grid md:grid-cols-3 gap-6">
+                <p className="text-xs font-mono uppercase tracking-widest text-[#6C93FF] mb-2 text-center">Why TrvstPulse</p>
+                <h3 className="text-3xl font-serif font-bold text-[#E7EAF0] mb-10 text-center">Built for verification, not guesswork</h3>
+                <div className="grid md:grid-cols-3 gap-px bg-[#262D3D] border border-[#262D3D]">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="glass-dark p-6 hover:border-slate-500/50 transition-all">
-                            <div className="w-10 h-10 bg-slate-700/40 rounded-lg flex items-center justify-center mb-4 border border-slate-600/40">
-                                <feature.icon className="h-5 w-5 text-blue-300" />
+                        <div key={idx} className="bg-[#171C27] p-7">
+                            <div className="w-9 h-9 flex items-center justify-center mb-5 border border-[#6C93FF] text-[#6C93FF] rounded-md">
+                                <feature.icon className="h-4 w-4" />
                             </div>
-                            <h4 className="font-bold text-slate-100 mb-2">{feature.title}</h4>
-                            <p className="text-xs text-slate-400 leading-relaxed">{feature.desc}</p>
+                            <h4 className="font-serif font-bold text-[#E7EAF0] mb-2">{feature.title}</h4>
+                            <p className="text-sm text-[#8B93A7] leading-relaxed">{feature.desc}</p>
                         </div>
                     ))}
                 </div>
