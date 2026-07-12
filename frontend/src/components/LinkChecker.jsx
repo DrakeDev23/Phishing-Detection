@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Icons } from "./Icons";
+import About from "./About";
+import Contact from "./Contact";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const MAX_URL_LENGTH = 2048;
@@ -26,73 +29,29 @@ function sanitizeBulkText(text) {
     return text.slice(0, MAX_BULK_LENGTH);
 }
 
-const Icons = {
-    Shield: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-    ),
-    Warning: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-        </svg>
-    ),
-    Ban: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-        </svg>
-    ),
-    Check: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-    ),
-    ChevronDown: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-    ),
-    Sparkle: ({ className = "h-4 w-4" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-        </svg>
-    ),
-    Spinner: ({ className = "h-4 w-4" }) => (
-        <svg className={`animate-spin ${className}`} fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-    ),
-    Arrow: ({ className = "h-3 w-3" }) => (
-        <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-        </svg>
-    ),
-};
-
 function getRiskConfig(riskLevel) {
     switch (riskLevel) {
         case "dangerous":
             return {
-                gradient: "from-red-600/20 to-pink-600/20",
+                bg: "bg-red-600/10",
                 border: "border-red-500/30",
-                badge: "bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-200 border border-red-500/30",
+                badge: "bg-red-600/20 text-red-200 border border-red-500/30",
                 label: "DANGEROUS",
                 icon: <Icons.Ban className="h-4 w-4" />,
             };
         case "suspicious":
             return {
-                gradient: "from-amber-600/20 to-orange-600/20",
+                bg: "bg-amber-600/10",
                 border: "border-amber-500/30",
-                badge: "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-200 border border-amber-500/30",
+                badge: "bg-amber-600/20 text-amber-200 border border-amber-500/30",
                 label: "SUSPICIOUS",
                 icon: <Icons.Warning className="h-4 w-4" />,
             };
         default:
             return {
-                gradient: "from-emerald-600/20 to-green-600/20",
+                bg: "bg-emerald-600/10",
                 border: "border-emerald-500/30",
-                badge: "bg-gradient-to-r from-emerald-500/20 to-green-500/20 text-emerald-200 border border-emerald-500/30",
+                badge: "bg-emerald-600/20 text-emerald-200 border border-emerald-500/30",
                 label: "SAFE",
                 icon: <Icons.Check className="h-4 w-4" />,
             };
@@ -112,14 +71,14 @@ function RiskBadge({ riskLevel }) {
 function StatusBadge({ isAlive, statusCode }) {
     if (isAlive) {
         return (
-            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-200 border border-blue-500/30">
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-600/20 text-blue-200 border border-blue-500/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block animate-pulse" />
                 {statusCode} OK
             </span>
         );
     }
     return (
-        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-600/30 text-slate-300 border border-slate-500/30">
+        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-600/20 text-slate-300 border border-slate-500/30">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block" />
             {statusCode || "No Response"}
         </span>
@@ -136,7 +95,7 @@ function PhishingPanel({ phishing }) {
     const hasVT = phishing.virustotal_summary;
 
     return (
-        <div className={`mt-4 rounded-xl border ${cfg.border} bg-linear-to-br ${cfg.gradient} overflow-hidden`}>
+        <div className={`mt-4 rounded-xl border ${cfg.border} ${cfg.bg} overflow-hidden`}>
             <button
                 onClick={() => setExpanded(!expanded)}
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-all"
@@ -167,8 +126,8 @@ function PhishingPanel({ phishing }) {
 
                     {hasVT && (
                         <div className={`flex items-start gap-3 p-3 rounded-lg border ${phishing.virustotal_summary?.includes("malicious") || phishing.virustotal_summary?.includes("suspicious")
-                                ? "bg-red-600/10 border-red-500/30"
-                                : "bg-slate-600/10 border-slate-500/30"
+                            ? "bg-red-600/10 border-red-500/30"
+                            : "bg-slate-600/10 border-slate-500/30"
                             }`}>
                             <Icons.Sparkle className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                             <div>
@@ -204,7 +163,7 @@ function ResultCard({ result }) {
     const cfg = getRiskConfig(riskLevel);
 
     return (
-        <div className={`rounded-xl border ${cfg.border} bg-linear-to-br ${cfg.gradient} p-4 backdrop-blur-sm hover:border-slate-400/30 transition-all group`}>
+        <div className={`rounded-xl border ${cfg.border} ${cfg.bg} p-4 backdrop-blur-sm hover:border-slate-400/30 transition-all group`}>
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                     <p className="font-mono text-sm text-slate-100 truncate font-medium group-hover:text-blue-300 transition-colors">{result.url}</p>
@@ -358,10 +317,10 @@ function LinkChecker() {
         <div className="min-h-[calc(100vh-4rem)] flex flex-col">
             <main id="home" className="max-w-5xl mx-auto px-4 py-12 w-full flex-1">
                 <div className="text-center mb-12">
-                    <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 bg-clip-text text-transparent mb-4 animate-fade-in">
+                    <h2 className="text-5xl md:text-6xl font-bold text-slate-100 mb-4">
                         TrvstPulse
                     </h2>
-                    <p className="text-lg text-slate-400 animate-fade-in">
+                    <p className="text-lg text-slate-400">
                         Enterprise grade link security analysis
                     </p>
                 </div>
@@ -372,8 +331,8 @@ function LinkChecker() {
                             key={mode}
                             onClick={() => setInputMode(mode)}
                             className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${inputMode === mode
-                                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30"
-                                    : "bg-slate-700/50 text-slate-400 hover:text-slate-300 border border-slate-600/30 hover:border-slate-500/30"
+                                ? "bg-blue-600 text-white"
+                                : "bg-slate-700/50 text-slate-400 hover:text-slate-300 border border-slate-600/30 hover:border-slate-500/30"
                                 }`}
                         >
                             {mode === "manual" ? "Manual URLs" : "Bulk / Paste Text"}
@@ -381,7 +340,7 @@ function LinkChecker() {
                     ))}
                 </div>
 
-                <div className="glass-dark p-8 mb-8 animate-scale-in">
+                <div className="glass-dark p-8 mb-8">
                     <label className="block text-sm font-semibold text-slate-200 mb-4">
                         {inputMode === "manual" ? "Enter URLs (max 20)" : "Paste any text"}
                     </label>
@@ -403,9 +362,10 @@ function LinkChecker() {
                                         {urls.length > 1 && (
                                             <button
                                                 onClick={() => removeUrl(i)}
+                                                aria-label="Remove URL"
                                                 className="px-3 py-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-600/10 transition-all"
                                             >
-                                                ×
+                                                <Icons.Close className="h-4 w-4" />
                                             </button>
                                         )}
                                     </div>
@@ -435,7 +395,7 @@ function LinkChecker() {
                     )}
 
                     {error && (
-                        <div className="mt-4 p-4 bg-red-600/10 border border-red-500/30 rounded-lg text-red-300 text-sm flex items-center gap-3 animate-scale-in">
+                        <div className="mt-4 p-4 bg-red-600/10 border border-red-500/30 rounded-lg text-red-300 text-sm flex items-center gap-3">
                             <Icons.Warning className="h-4 w-4 shrink-0" />
                             {error}
                         </div>
@@ -468,16 +428,16 @@ function LinkChecker() {
                 </div>
 
                 {results && (
-                    <div className="space-y-6 animate-fade-in">
+                    <div className="space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                             {[
-                                { label: "Total", value: summary.total, gradient: "from-slate-600/20 to-slate-500/20", border: "border-slate-500/30" },
-                                { label: "Alive", value: summary.alive, gradient: "from-emerald-600/20 to-green-600/20", border: "border-emerald-500/30" },
-                                { label: "Broken", value: summary.dead, gradient: "from-slate-600/20 to-slate-500/20", border: "border-slate-500/30" },
-                                { label: "Suspicious", value: summary.suspicious ?? 0, gradient: "from-amber-600/20 to-orange-600/20", border: "border-amber-500/30" },
-                                { label: "Dangerous", value: summary.dangerous ?? 0, gradient: "from-red-600/20 to-pink-600/20", border: "border-red-500/30" },
+                                { label: "Total", value: summary.total, bg: "bg-slate-600/10", border: "border-slate-500/30" },
+                                { label: "Alive", value: summary.alive, bg: "bg-emerald-600/10", border: "border-emerald-500/30" },
+                                { label: "Broken", value: summary.dead, bg: "bg-slate-600/10", border: "border-slate-500/30" },
+                                { label: "Suspicious", value: summary.suspicious ?? 0, bg: "bg-amber-600/10", border: "border-amber-500/30" },
+                                { label: "Dangerous", value: summary.dangerous ?? 0, bg: "bg-red-600/10", border: "border-red-500/30" },
                             ].map((stat, idx) => (
-                                <div key={idx} className={`rounded-xl border ${stat.border} bg-linear-to-br ${stat.gradient} p-4 text-center backdrop-blur-sm`}>
+                                <div key={idx} className={`rounded-xl border ${stat.border} ${stat.bg} p-4 text-center backdrop-blur-sm`}>
                                     <p className="text-3xl font-bold text-slate-100">{stat.value}</p>
                                     <p className="text-xs text-slate-400 font-medium mt-2 uppercase tracking-wider">{stat.label}</p>
                                 </div>
@@ -486,8 +446,8 @@ function LinkChecker() {
 
                         {(summary.dangerous > 0 || summary.suspicious > 0) && (
                             <div className={`p-4 rounded-xl border backdrop-blur-sm flex items-start gap-3 ${summary.dangerous > 0
-                                    ? "bg-red-600/10 border-red-500/30"
-                                    : "bg-amber-600/10 border-amber-500/30"
+                                ? "bg-red-600/10 border-red-500/30"
+                                : "bg-amber-600/10 border-amber-500/30"
                                 }`}>
                                 {summary.dangerous > 0 ? (
                                     <Icons.Ban className="h-5 w-5 shrink-0 mt-0.5 text-red-400" />
@@ -517,7 +477,7 @@ function LinkChecker() {
                         )}
 
                         {summary.ai_analysis && (
-                            <div className="rounded-xl border border-blue-500/30 bg-linear-to-br from-blue-600/10 to-cyan-600/10 overflow-hidden">
+                            <div className="rounded-xl border border-blue-500/30 bg-blue-600/10 overflow-hidden">
                                 <button
                                     onClick={() => setAiExpanded(!aiExpanded)}
                                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-all"
@@ -555,34 +515,9 @@ function LinkChecker() {
                 )}
             </main>
 
-            {!results && (
-                <section id="about" className="border-t border-slate-700/30 py-12 px-4 bg-slate-900/30">
-                    <div className="max-w-5xl mx-auto">
-                        <h3 className="text-2xl font-bold text-slate-100 mb-8 text-center">Why Use TrvstPulse?</h3>
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {[
-                                { icon: Icons.Shield, title: "Phishing Detection", desc: "Heuristic analysis, Google Safe Browsing, and VirusTotal integration" },
-                                { icon: Icons.Check, title: "Link Health", desc: "Verify if links are alive or broken with HTTP status tracking" },
-                                { icon: Icons.Sparkle, title: "AI Analysis", desc: "Plain language security summaries powered by Gemini AI" },
-                            ].map((feature, idx) => (
-                                <div key={idx} className="glass-dark p-6 hover:border-slate-500/50 transition-all">
-                                    <div className="w-10 h-10 bg-linear-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center mb-4 border border-blue-500/30">
-                                        <feature.icon className="h-5 w-5 text-blue-300" />
-                                    </div>
-                                    <h4 className="font-bold text-slate-100 mb-2">{feature.title}</h4>
-                                    <p className="text-xs text-slate-400 leading-relaxed">{feature.desc}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
+            {!results && <About />}
 
-            <footer id="contact" className="border-t border-slate-700/30 bg-slate-900/50 py-8 px-4">
-                <div className="max-w-5xl mx-auto text-center text-xs text-slate-400">
-                    <p>© {new Date().getFullYear()} TrvstPulse. Advanced link security analysis.</p>
-                </div>
-            </footer>
+            <Contact />
         </div>
     );
 }
