@@ -1,19 +1,19 @@
-import { BriefcaseBusiness, Code2, Mail, MessageCircle } from "lucide-react";
+import { Mail } from "lucide-react";
+import { FacebookIcon, GithubIcon, LinkedinIcon } from "./SocialIcons";
 
 const CONTACT_EMAIL = "maccogoth@gmail.com";
 
 const socialLinks = [
-    { icon: MessageCircle, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
-    { icon: Code2, label: "GitHub", href: "https://github.com/DrakeDev23" },
-    { icon: BriefcaseBusiness, label: "LinkedIn", href: "https://www.linkedin.com/in/zedrick-dwyn-manguilimotan-85540b3b2/" },
+    { icon: FacebookIcon, label: "Facebook", href: "https://web.facebook.com/stephen.mart.98" },
+    { icon: GithubIcon, label: "GitHub", href: "https://github.com/DrakeDev23" },
+    { icon: LinkedinIcon, label: "LinkedIn", href: "https://www.linkedin.com/in/zedrick-dwyn-manguilimotan-85540b3b2/" },
 ];
 
 function Contact() {
     return (
         <section id="contact" className="border-t border-[#262D3D] bg-[#141B2E] py-16 px-4">
             <div className="max-w-5xl mx-auto text-center">
-                <p className="text-xs font-mono uppercase tracking-widest text-[#6C93FF] mb-2">Get in Touch</p>
-                <h3 className="text-3xl font-serif font-bold text-[#E7EAF0] mb-3">Talk to the Founder</h3>
+                <h3 className="text-3xl font-serif font-bold text-[#E7EAF0] mb-3">Get in touch</h3>
                 <p className="text-sm text-[#8B93A7] mb-8">Questions, feedback, or a link you want us to look at.</p>
 
                 <a
