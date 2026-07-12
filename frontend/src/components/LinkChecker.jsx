@@ -67,7 +67,7 @@ function getRiskConfig(riskLevel) {
 function RiskBadge({ riskLevel }) {
     const cfg = getRiskConfig(riskLevel);
     return (
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold tracking-wide ${cfg.badge}`}>
+        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-mono font-bold text-sm tracking-wider shadow-lg ${cfg.badge}`}>
             {cfg.icon}
             {cfg.label}
         </span>
@@ -77,15 +77,15 @@ function RiskBadge({ riskLevel }) {
 function StatusBadge({ isAlive, statusCode }) {
     if (isAlive) {
         return (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-[#6C93FF] bg-[#141B2E] border border-[#2B3B63]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#6C93FF] inline-block" />
+            <span className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-semibold text-emerald-300 bg-emerald-950/40 border border-emerald-500/50 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
                 {statusCode} OK
             </span>
         );
     }
     return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold text-[#8B93A7] bg-[#171C27] border border-[#262D3D]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8B93A7] inline-block" />
+        <span className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono font-semibold text-red-300 bg-red-950/40 border border-red-500/50 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
             {statusCode || "No Response"}
         </span>
     );
@@ -168,10 +168,10 @@ function ResultCard({ result }) {
     const cfg = getRiskConfig(riskLevel);
 
     return (
-        <div className={`rounded-md border-2 border-l-4 ${cfg.border} ${cfg.accent} bg-[#171C27] p-4 hover:opacity-90 transition-colors`}>
-            <div className="flex items-start justify-between gap-3 mb-3">
+        <div className={`rounded-xl border-2 border-l-4 ${cfg.border} ${cfg.accent} bg-gradient-to-br from-slate-900/60 to-slate-800/40 p-5 hover:shadow-xl transition-all shadow-md backdrop-blur-sm`}>
+            <div className="flex items-start justify-between gap-3 mb-4">
                 <div className="flex-1 min-w-0">
-                    <p className="font-mono text-sm text-[#E7EAF0] truncate font-medium">{result.url}</p>
+                    <p className="font-mono text-sm text-slate-100 truncate font-semibold break-all">{result.url}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                     {result.response_time_ms != null && (
@@ -319,36 +319,53 @@ function LinkChecker() {
     const summary = results?.summary;
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-[#10141C]">
-            <main id="home" className="max-w-5xl mx-auto px-4 py-16 w-full flex-1">
-                <div className="text-center mb-12">
-                    <p className="text-xs font-mono uppercase tracking-widest text-[#6C93FF] mb-3">Link Security Report</p>
-                    <h2 className="text-5xl md:text-6xl font-serif font-bold text-[#E7EAF0] mb-4">
+        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+            <main id="home" className="max-w-5xl mx-auto px-4 py-20 w-full flex-1">
+                <div className="text-center mb-16">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <div className="h-px w-8 bg-gradient-to-r from-transparent to-cyan-500"></div>
+                        <p className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2"><Icons.Shield className="h-4 w-4" /> Advanced Security Scanner</p>
+                        <div className="h-px w-8 bg-gradient-to-l from-transparent to-cyan-500"></div>
+                    </div>
+                    <h2 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-cyan-300 mb-4 tracking-tight">
                         TrvstPulse
                     </h2>
-                    <p className="text-base text-[#8B93A7] max-w-md mx-auto">
-                        Verify a link before you trust it.
+                    <p className="text-lg text-slate-300 max-w-2xl mx-auto font-medium">
+                        Verify every link before you trust it. Detect phishing, malware, and suspicious URLs instantly with advanced AI analysis.
                     </p>
                 </div>
 
-                <div className="flex justify-center border-b border-[#262D3D] mb-8">
+                <div className="flex justify-center gap-4 mb-8">
                     {["manual", "bulk"].map((mode) => (
                         <button
                             key={mode}
                             onClick={() => setInputMode(mode)}
-                            className={`px-6 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${inputMode === mode
-                                ? "border-[#6C93FF] text-[#E7EAF0]"
-                                : "border-transparent text-[#8B93A7] hover:text-[#E7EAF0]"
-                                }`}
+                            className={`px-6 py-3 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 ${
+                                inputMode === mode
+                                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20"
+                                    : "text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-700"
+                            }`}
                         >
-                            {mode === "manual" ? "Manual URLs" : "Bulk / Paste Text"}
+                            {mode === "manual" ? (
+                                <>
+                                    <Icons.Pencil className="h-4 w-4" /> Manual URLs
+                                </>
+                            ) : (
+                                <>
+                                    <Icons.Clipboard className="h-4 w-4" /> Bulk / Paste Text
+                                </>
+                            )}
                         </button>
                     ))}
                 </div>
 
-                <div className="border border-[#262D3D] bg-[#171C27] rounded-md p-8 mb-8">
-                    <label className="block text-sm font-semibold text-[#E7EAF0] mb-4">
-                        {inputMode === "manual" ? "Enter URLs (max 20)" : "Paste any text"}
+                <div className="border border-slate-700/50 bg-gradient-to-br from-slate-900/80 to-slate-900/50 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-xl">
+                    <label className="block text-sm font-bold text-slate-200 mb-4 uppercase tracking-wide">
+                        {inputMode === "manual" ? (
+                            <span className="flex items-center gap-2"><Icons.Link className="h-4 w-4" /> Enter URLs (max 20)</span>
+                        ) : (
+                            <span className="flex items-center gap-2"><Icons.Clipboard className="h-4 w-4" /> Paste any text</span>
+                        )}
                     </label>
 
                     {inputMode === "manual" ? (
@@ -362,7 +379,7 @@ function LinkChecker() {
                                             onChange={(e) => updateUrl(i, e.target.value)}
                                             placeholder="https://example.com"
                                             maxLength={MAX_URL_LENGTH}
-                                            className="flex-1 px-4 py-3 rounded-md bg-[#10141C] border border-[#262D3D] text-sm font-mono text-[#E7EAF0] placeholder:text-[#8B93A7]/60 focus:outline-none focus:border-[#6C93FF] focus:ring-1 focus:ring-[#6C93FF] transition-colors"
+                                            className="flex-1 px-4 py-3 rounded-lg bg-slate-800/50 border border-slate-600/50 text-sm font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all shadow-sm"
                                             onKeyDown={(e) => e.key === "Enter" && addUrl()}
                                         />
                                         {urls.length > 1 && (
@@ -395,7 +412,7 @@ function LinkChecker() {
                                 onChange={handleBulkTextChange}
                                 maxLength={MAX_BULK_LENGTH}
                                 placeholder="Paste HTML, markdown, emails, or any text containing URLs..."
-                                className="w-full h-48 resize-none px-4 py-3 rounded-md bg-[#10141C] border border-[#262D3D] text-sm font-mono text-[#E7EAF0] placeholder:text-[#8B93A7]/60 focus:outline-none focus:border-[#6C93FF] focus:ring-1 focus:ring-[#6C93FF] transition-colors"
+                                className="w-full h-48 resize-none px-4 py-3 rounded-lg bg-slate-800/50 border border-slate-600/50 text-sm font-mono text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all shadow-sm"
                             />
                         </div>
                     )}
@@ -407,28 +424,28 @@ function LinkChecker() {
                         </div>
                     )}
 
-                    <div className="flex gap-3 mt-6">
+                    <div className="flex gap-3 mt-8">
                         <button
                             onClick={inputMode === "manual" ? handleManualCheck : handleExtractAndCheck}
                             disabled={loading}
-                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-[#3D63DD] text-white text-sm font-semibold hover:bg-[#4E76F2] disabled:opacity-60 transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:shadow-none uppercase tracking-wide"
                         >
                             {loading ? (
                                 <>
-                                    <Icons.Spinner className="h-4 w-4" />
-                                    Analyzing...
+                                    <Icons.Spinner className="h-5 w-5 animate-spin" />
+                                    Scanning...
                                 </>
                             ) : (
                                 <>
-                                    <Icons.Shield className="h-4 w-4" />
-                                    Check Links
+                                    <Icons.Shield className="h-5 w-5" />
+                                    Scan Now
                                 </>
                             )}
                         </button>
                         {results && (
                             <button
                                 onClick={handleReset}
-                                className="px-6 py-3 rounded-md border border-[#262D3D] text-[#E7EAF0] text-sm font-semibold hover:bg-white/5 transition-colors"
+                                className="px-6 py-3 rounded-lg border-2 border-slate-600 text-slate-200 text-sm font-semibold hover:bg-slate-800/50 hover:border-slate-500 transition-all"
                             >
                                 Reset
                             </button>
@@ -438,17 +455,18 @@ function LinkChecker() {
 
                 {results && (
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-px bg-[#262D3D] border border-[#262D3D]">
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                             {[
-                                { label: "Total", value: summary.total },
-                                { label: "Alive", value: summary.alive },
-                                { label: "Broken", value: summary.dead },
-                                { label: "Suspicious", value: summary.suspicious ?? 0 },
-                                { label: "Dangerous", value: summary.dangerous ?? 0 },
+                                { label: "Total", value: summary.total, icon: <Icons.BarChart className="h-6 w-6 text-cyan-400" /> },
+                                { label: "Alive", value: summary.alive, icon: <Icons.Check className="h-6 w-6 text-emerald-400" /> },
+                                { label: "Broken", value: summary.dead, icon: <Icons.Close className="h-6 w-6 text-red-400" /> },
+                                { label: "Suspicious", value: summary.suspicious ?? 0, icon: <Icons.Warning className="h-6 w-6 text-amber-400" /> },
+                                { label: "Dangerous", value: summary.dangerous ?? 0, icon: <Icons.Ban className="h-6 w-6 text-red-500" /> },
                             ].map((stat, idx) => (
-                                <div key={idx} className="bg-[#171C27] p-4 text-center">
-                                    <p className="text-3xl font-serif font-bold text-[#E7EAF0]">{stat.value}</p>
-                                    <p className="text-xs text-[#8B93A7] font-mono mt-2 uppercase tracking-wider">{stat.label}</p>
+                                <div key={idx} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-6 rounded-lg text-center hover:border-slate-600/80 transition-all shadow-md">
+                                    <div className="flex justify-center mb-2">{stat.icon}</div>
+                                    <p className="text-4xl font-bold text-cyan-300 mb-2">{stat.value}</p>
+                                    <p className="text-xs text-slate-400 font-mono uppercase tracking-widest font-semibold">{stat.label}</p>
                                 </div>
                             ))}
                         </div>
@@ -506,7 +524,9 @@ function LinkChecker() {
                         )}
 
                         <div>
-                            <h3 className="text-xs font-mono font-semibold text-[#8B93A7] uppercase tracking-wider mb-4">Results</h3>
+                            <h3 className="text-sm font-mono font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Icons.Search className="h-5 w-5" /> Scan Results
+                            </h3>
                             <div className="space-y-3">
                                 {[...results.results]
                                     .sort((a, b) => {
