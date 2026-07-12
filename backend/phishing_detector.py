@@ -11,7 +11,6 @@ from config import (
     SCORE_SUSPICIOUS,
     SCORE_DANGEROUS,
 )
-from security import is_trusted_domain
 
 
 def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
@@ -21,16 +20,15 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     hostname = (parsed.hostname or "").lower()
     path = (parsed.path or "").lower()
     query = (parsed.query or "").lower()
-    fragment = (parsed.fragment or "").lower()
     full_url_lower = url.lower()
+
+    # Trusted domains can host compromised pages, open redirects, and user content.
+    # They remain useful context elsewhere, but must not bypass phishing analysis.
 
     try:
         decoded_url = unquote(full_url_lower)
     except Exception:
         decoded_url = full_url_lower
-
-    if is_trusted_domain(hostname):
-        return False, [], 0
 
     def add_flag(reason: str, weight: int) -> None:
         nonlocal score
@@ -44,8 +42,14 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
     except ValueError:
         pass
 
+    if parsed.username is not None:
+        add_flag("URL contains embedded credentials/userinfo — common host-disguise technique", 3)
+
+    if hostname.startswith("xn--") or ".xn--" in hostname:
+        add_flag("Punycode domain detected — review for a possible homograph attack", 2)
+
     parts = hostname.split(".")
-    bare_host = hostname.lstrip("www.")
+    bare_host = hostname.removeprefix("www.")
 
     subdomain_depth = len(parts) - 2
     if subdomain_depth >= 4:
@@ -60,12 +64,14 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
 
     for tld in SUSPICIOUS_TLDS:
         if hostname.endswith(tld):
-            add_flag(f"High-risk top-level domain: {tld}", 2)
+            # A TLD alone is weak evidence. It becomes meaningful when paired with
+            # a credential lure or another independent signal below.
+            add_flag(f"Higher-risk top-level domain: {tld}", 1)
             break
 
-    bare = hostname.lstrip("www.")
+    bare = hostname.removeprefix("www.")
     if bare in URL_SHORTENERS:
-        add_flag(f"URL shortener detected ({bare}) — real destination is hidden", 2)
+        add_flag(f"URL shortener detected ({bare}) — real destination is hidden", 1)
 
     for brand_name, pattern in BRAND_IN_DOMAIN_PATTERNS:
         if brand_name in hostname:
@@ -79,7 +85,7 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
 
     url_len = len(url)
     if url_len > 200:
-        add_flag(f"Very long URL ({url_len} chars) — may be obfuscating destination", 2)
+        add_flag(f"Very long URL ({url_len} chars) — may be obfuscating destination", 1)
     elif url_len > 150:
         add_flag(f"Unusually long URL ({url_len} chars)", 1)
 
@@ -113,8 +119,8 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
             if re.search(pat, sld):
                 add_flag(f"Possible homoglyph/lookalike attack in SLD '{sld}': {msg}", 2)
 
-    if re.match(r"^[a-z]{2,5}\d{3,5}[a-z]{1,4}$", sld):
-        add_flag(f"Domain SLD looks randomly generated ('{sld}') — common in phishing infrastructure", 2)
+    if has_suspicious_tld and re.match(r"^[a-z]{2,5}\d{3,5}[a-z]{1,4}$", sld):
+        add_flag(f"Domain SLD looks randomly generated ('{sld}') — common in phishing infrastructure", 1)
 
     giveaway_keywords = [
         r"\d{2,4}gb", r"\d{1,2}tb", "free-storage", "free-data",
@@ -126,22 +132,10 @@ def heuristic_phishing_check(url: str) -> tuple[bool, list[str], int]:
             add_flag(f"Free giveaway/storage lure keyword detected: '{kw}'", 3)
             break
 
-    if fragment and re.match(r"^\d{10,}$", fragment):
-        add_flag(f"Numeric-only URL fragment (#{fragment[:20]}) — campaign tracking ID", 1)
-
-    if query and re.match(r"^[a-z0-9]+=\d+$", query):
-        add_flag("Query string is a single numeric parameter — likely campaign tracking", 1)
-
     if re.search(r"\.(php|aspx|asp)$", path):
         php_suspicious_paths = ["registration", "signup", "register", "login", "verify", "confirm", "account"]
         if any(kw in path for kw in php_suspicious_paths):
-            add_flag("PHP/ASPX form page with sensitive keyword on unrecognized domain — likely credential harvesting", 3)
-
-    financial_tlds = {".cash", ".finance", ".capital", ".investments", ".trading", ".exchange", ".money", ".fund"}
-    for ftld in financial_tlds:
-        if hostname.endswith(ftld):
-            add_flag(f"Domain uses financial TLD ({ftld}) — commonly used in investment/crypto scams", 3)
-            break
+            add_flag("PHP/ASPX form page with sensitive keyword — possible credential harvesting", 3)
 
     brand_hyphen_pattern = r"^(" + "|".join(KNOWN_BRANDS) + r")-[a-z0-9]+"
     action_hyphen_pattern = r"^[a-z0-9]+-(login|secure|verify|account|update|confirm|signin|support)-?(" + "|".join(KNOWN_BRANDS) + r")"
@@ -156,9 +150,10 @@ def compute_risk_level(
     score: int,
     gsb_threat: str | None,
     heuristic_flags: list[str],
+    virustotal_malicious: bool = False,
 ) -> str:
 
-    if gsb_threat:
+    if gsb_threat or virustotal_malicious:
         return "dangerous"
     if score >= SCORE_DANGEROUS:
         return "dangerous"

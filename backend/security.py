@@ -1,5 +1,7 @@
+import asyncio
 import re
 import ipaddress
+import socket
 from urllib.parse import urlparse
 from config import MAX_URL_LENGTH, BLOCKED_NETWORKS, TRUSTED_DOMAINS
 
@@ -38,10 +40,36 @@ def is_private_ip(hostname: str) -> bool:
     """
     try:
         addr = ipaddress.ip_address(hostname)
-        return any(addr in net for net in BLOCKED_NETWORKS)
+        return is_blocked_ip(addr)
     except ValueError:
         blocked_hosts = {"localhost", "local", "internal", "metadata.google.internal"}
-        return hostname.lower() in blocked_hosts
+        return hostname.lower().rstrip(".") in blocked_hosts
+
+
+def is_blocked_ip(address: str | ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
+    """Return True when an address must never be requested by the scanner."""
+    addr = ipaddress.ip_address(address)
+    return (
+        any(addr in network for network in BLOCKED_NETWORKS)
+        or addr.is_loopback
+        or addr.is_private
+        or addr.is_link_local
+        or addr.is_multicast
+        or addr.is_reserved
+        or addr.is_unspecified
+        or not addr.is_global
+    )
+
+
+async def resolve_host_addresses(hostname: str, port: int | None) -> set[str]:
+    """Resolve all addresses for a host so each can be checked before a request."""
+    loop = asyncio.get_running_loop()
+    records = await loop.getaddrinfo(
+        hostname,
+        port or 443,
+        type=socket.SOCK_STREAM,
+    )
+    return {record[4][0] for record in records}
 
 
 def is_safe_url(url: str) -> tuple[bool, str]:
@@ -57,6 +85,37 @@ def is_safe_url(url: str) -> tuple[bool, str]:
         return True, ""
     except Exception as e:
         return False, f"Invalid URL: {str(e)}"
+
+
+async def validate_url_target(url: str) -> tuple[bool, str]:
+    """Validate a URL and every DNS result before the backend connects to it."""
+    try:
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            return False, "Blocked: only http/https URLs are allowed"
+
+        hostname = parsed.hostname
+        if not hostname:
+            return False, "Blocked: URL has no valid host"
+
+        # Accessing ``parsed.port`` also rejects invalid or out-of-range ports.
+        port = parsed.port
+        if is_private_ip(hostname):
+            return False, "Blocked: URL points to internal/private network"
+
+        addresses = await resolve_host_addresses(hostname, port)
+        if not addresses:
+            return False, "Blocked: hostname did not resolve"
+
+        blocked_addresses = [address for address in addresses if is_blocked_ip(address)]
+        if blocked_addresses:
+            return False, "Blocked: hostname resolves to an internal/private network"
+
+        return True, ""
+    except (OSError, ValueError, socket.gaierror):
+        return False, "Blocked: hostname could not be resolved safely"
+    except Exception:
+        return False, "Blocked: invalid URL target"
 
 
 def is_trusted_domain(hostname: str) -> bool:

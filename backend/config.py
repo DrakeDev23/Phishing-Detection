@@ -19,6 +19,8 @@ GEMINI_MODELS = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-1.5-flash"
 MAX_URL_LENGTH = 2048
 MAX_URLS_PER_REQUEST = 20
 MAX_BULK_TEXT_LENGTH = 50_000
+REQUEST_TIMEOUT_SECONDS = float(os.getenv("REQUEST_TIMEOUT_SECONDS", "10"))
+MAX_REDIRECTS = int(os.getenv("MAX_REDIRECTS", "5"))
 
 DEFAULT_RATE_LIMIT = "60/minute"
 CHECK_LINKS_RATE_LIMIT = "30/minute"
@@ -146,21 +148,16 @@ PHISHING_PATTERNS: list[tuple[str, str, int]] = [
     (r"free-?\d{2,4}(gb|tb|mb)",          "Fake free-storage lure (reversed)",        3),
     (r"labor.?day.{0,30}(free|gb|prize)",  "Fake holiday giveaway lure",               3),
     (r"(black.?friday|cyber.?monday|christmas|easter|holiday).{0,30}(free|gb|prize|gift|reward)", "Fake holiday giveaway lure", 3),
-    (r"(secure|login|verify|update|confirm|account|signin|password|credential).{0,20}\.(xyz|tk|ml|ga|cf|gq|top|online|site|buzz|live|click)", "Suspicious keyword + high-risk TLD", 3),
-    (r"@.+\.(com|net|org)",                                        "URL contains @ (credential-bypass trick)",  3),
     (r"https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",             "Direct IP address URL",                     3),
     (r"%[0-9a-fA-F]{2}.*%[0-9a-fA-F]{2}.*%[0-9a-fA-F]{2}",      "Heavy URL encoding (obfuscation)",          2),
     (r"[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+\.",               "Highly hyphenated domain (4+ segments)",    2),
     (r"(free|gift|prize|winner|lucky|bonus|reward|claim).{0,30}(click|now|here|login)", "Reward/urgency language", 2),
     (r"^https?://[a-z]{2,5}\d{1,4}[a-z]{1,4}\.(top|xyz|online|site|click|live|win|loan)", "Random-looking domain on high-risk TLD", 2),
-    (r"#\d{13,}$",                         "Numeric timestamp fragment (tracking/campaign ID)", 1),
-    (r"\?[a-z0-9]+=\d{3,}(&[a-z0-9]+=\d+)*#",  "Numeric-only query params + fragment (campaign tracking)", 1),
     (r"(coin|crypto|wallet|token|nft|defi|bitcoin|ethereum|binance)[a-z0-9]*\.(io|cash|top|xyz|online|site|finance|capital|exchange|market)", "Crypto-themed domain on high-risk TLD — common investment scam", 3),
     (r"(kringle|xmas|santa|holiday)[a-z0-9]*\.(cash|io|top|xyz|online)", "Suspicious seasonal/gift domain on high-risk TLD", 3),
     (r"(earn|profit|invest|income|revenue|payout|dividend)[a-z0-9-]*\.(cash|io|top|xyz|online|finance)", "Investment lure on high-risk TLD", 3),
     (r"/(registration_form|register_form|signup_form|login_form|verify_form)\.", "Credential harvesting form path detected", 3),
     (r"/(registration|signup|enroll|join|create.?account)[^/]*\.php", "Suspicious registration PHP page", 2),
-    (r"\?(link|ref|referral|aff|affiliate|invite|code)=[a-z0-9_-]+$", "Referral/affiliate parameter — common in scam recruitment", 2),
     (r"(sbc|doge|shib|pepe|floki|luna|bnb|trx|usdt)[a-z0-9]*coin[a-z0-9]*\.", "Meme/altcoin scam domain pattern", 3),
     (r"(sbc|doge|shib|pepe|floki|luna|bnb|trx|usdt)[a-z0-9]*\.(io|cash|finance|exchange|market|capital)", "Altcoin-themed domain on financial TLD", 3),
 ]

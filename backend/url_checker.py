@@ -1,26 +1,21 @@
 import asyncio
 import httpx
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 from models import LinkResult, PhishingAnalysis
-from security import is_safe_url
+from security import validate_url_target
 from phishing_detector import heuristic_phishing_check, compute_risk_level
 from external_services import check_virustotal
-from config import VIRUSTOTAL_API_KEY, SEVERITY_WEIGHT
+from config import MAX_REDIRECTS, REQUEST_TIMEOUT_SECONDS, SEVERITY_WEIGHT, VIRUSTOTAL_API_KEY
+
+
+REDIRECT_STATUS_CODES = {301, 302, 303, 307, 308}
 
 
 async def check_single_link(
     url: str,
     safe_browsing_hits: dict[str, str],
 ) -> LinkResult:
-    safe, reason = is_safe_url(url)
-    if not safe:
-        return LinkResult(
-            url=url, status_code=None, is_alive=False, response_time_ms=None,
-            redirect_url=None, error=reason, ai_analysis=None, phishing=None,
-            checked_at=datetime.utcnow().isoformat(),
-        )
-
     start = asyncio.get_event_loop().time()
     status_code  = None
     is_alive     = False
@@ -30,26 +25,49 @@ async def check_single_link(
 
     try:
         async with httpx.AsyncClient(
-            follow_redirects=True, timeout=10.0, max_redirects=5,
+            follow_redirects=False,
+            timeout=httpx.Timeout(REQUEST_TIMEOUT_SECONDS),
         ) as client:
-            response = await client.get(url, headers={"User-Agent": "LinkChecker/1.0"})
-            elapsed   = (asyncio.get_event_loop().time() - start) * 1000
-            final_url = str(response.url)
-            redirect_url = final_url if final_url != url else None
+            current_url = url
+            for redirect_count in range(MAX_REDIRECTS + 1):
+                safe, reason = await validate_url_target(current_url)
+                if not safe:
+                    error = f"Redirect blocked: {reason}" if current_url != url else reason
+                    return LinkResult(
+                        url=url, status_code=None, is_alive=False,
+                        response_time_ms=None, redirect_url=redirect_url,
+                        error=error, ai_analysis=None, phishing=None,
+                        checked_at=datetime.utcnow().isoformat(),
+                    )
 
-            if redirect_url:
-                safe, reason = is_safe_url(redirect_url)
+                async with client.stream(
+                    "GET", current_url, headers={"User-Agent": "LinkChecker/1.0"}
+                ) as response:
+                    status_code = response.status_code
+                    location = response.headers.get("location")
+
+                if status_code not in REDIRECT_STATUS_CODES or not location:
+                    is_alive = status_code < 400
+                    elapsed = round((asyncio.get_event_loop().time() - start) * 1000, 2)
+                    break
+
+                if redirect_count == MAX_REDIRECTS:
+                    http_error = f"Too many redirects (maximum {MAX_REDIRECTS})"
+                    status_code = None
+                    break
+
+                next_url = urljoin(current_url, location)
+                safe, reason = await validate_url_target(next_url)
                 if not safe:
                     return LinkResult(
                         url=url, status_code=None, is_alive=False,
-                        response_time_ms=None, redirect_url=None,
+                        response_time_ms=None, redirect_url=redirect_url,
                         error=f"Redirect blocked: {reason}", ai_analysis=None, phishing=None,
                         checked_at=datetime.utcnow().isoformat(),
                     )
 
-            status_code = response.status_code
-            is_alive = response.status_code < 400
-            elapsed  = round(elapsed, 2)
+                current_url = next_url
+                redirect_url = current_url if current_url != url else None
 
     except httpx.TimeoutException:
         http_error = "Request timed out"
@@ -88,14 +106,17 @@ async def check_single_link(
 
     gsb_threat = safe_browsing_hits.get(url) or safe_browsing_hits.get(check_url)
 
+    vt_malicious = False
     vt_summary = ""
     if VIRUSTOTAL_API_KEY and (is_suspicious_heuristic or gsb_threat):
-        _, vt_summary = await check_virustotal(check_url)
+        vt_malicious, vt_summary = await check_virustotal(check_url)
 
-    risk_level = compute_risk_level(phishing_score, gsb_threat, heuristic_flags)
+    risk_level = compute_risk_level(
+        phishing_score, gsb_threat, heuristic_flags, virustotal_malicious=vt_malicious
+    )
 
     phishing = PhishingAnalysis(
-        is_suspicious=bool(gsb_threat or is_suspicious_heuristic),
+        is_suspicious=bool(gsb_threat or vt_malicious or is_suspicious_heuristic),
         risk_level=risk_level,
         phishing_score=phishing_score,
         heuristic_flags=heuristic_flags,
