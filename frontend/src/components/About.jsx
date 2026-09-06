@@ -48,23 +48,20 @@ function About() {
                                     key={idx}
                                     onMouseEnter={() => setActive(idx)}
                                     onClick={() => setActive(idx)}
-                                    className={`w-full flex items-center gap-4 px-6 py-5 text-left border-l-2 transition-all duration-300 ${
-                                        isActive
+                                    className={`w-full flex items-center gap-4 px-6 py-5 text-left border-l-2 transition-all duration-300 ${isActive
                                             ? "border-l-[#6C93FF] bg-[#1B2230]"
                                             : "border-l-transparent hover:bg-[#1B2230]/60"
-                                    }`}
+                                        }`}
                                 >
                                     <span
-                                        className={`font-mono text-xs transition-colors duration-300 ${
-                                            isActive ? "text-[#6C93FF]" : "text-[#4C5468]"
-                                        }`}
+                                        className={`font-mono text-xs transition-colors duration-300 ${isActive ? "text-[#6C93FF]" : "text-[#4C5468]"
+                                            }`}
                                     >
                                         {feature.code}
                                     </span>
                                     <span
-                                        className={`text-sm font-medium transition-colors duration-300 ${
-                                            isActive ? "text-[#E7EAF0]" : "text-[#8B93A7]"
-                                        }`}
+                                        className={`text-sm font-medium transition-colors duration-300 ${isActive ? "text-[#E7EAF0]" : "text-[#8B93A7]"
+                                            }`}
                                     >
                                         {feature.title}
                                     </span>
@@ -73,7 +70,7 @@ function About() {
                         })}
                     </div>
 
-                    <div className="relative p-10 min-h-[280px] flex flex-col justify-center overflow-hidden">
+                    <div className="relative p-10 py-16 flex flex-col justify-center overflow-hidden">
                         <div
                             className="absolute inset-0 opacity-[0.03] pointer-events-none"
                             style={{
@@ -106,9 +103,8 @@ function About() {
                             {features.map((_, idx) => (
                                 <span
                                     key={idx}
-                                    className={`h-1 rounded-full transition-all duration-300 ${
-                                        active === idx ? "w-6 bg-[#6C93FF]" : "w-1 bg-[#262D3D]"
-                                    }`}
+                                    className={`h-1 rounded-full transition-all duration-300 ${active === idx ? "w-6 bg-[#6C93FF]" : "w-1 bg-[#262D3D]"
+                                        }`}
                                 />
                             ))}
                         </div>
