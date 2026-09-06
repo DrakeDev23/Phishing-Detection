@@ -187,7 +187,7 @@ function ResultCard({ result }) {
     const cfg = getRiskConfig(riskLevel);
 
     return (
-        <div className={`rounded-xl border-2 border-l-4 ${cfg.border} ${cfg.accent} bg-gradient-to-br from-slate-900/60 to-slate-800/40 p-5 hover:shadow-xl transition-all shadow-md backdrop-blur-sm`}>
+        <div className={`rounded-xl border-2 border-l-4 ${cfg.border} ${cfg.accent} bg-slate-900/50 p-5 hover:shadow-xl transition-all shadow-md backdrop-blur-sm`}>
             <div className="flex items-start justify-between gap-3 mb-4">
                 <div className="flex-1 min-w-0">
                     <p className="font-mono text-sm text-slate-100 truncate font-semibold break-all">{result.url}</p>
@@ -338,15 +338,15 @@ function LinkChecker() {
     const summary = results?.summary;
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-slate-950">
             <main id="home" className="max-w-5xl mx-auto px-4 py-20 w-full flex-1">
                 <div className="text-center mb-16">
                     <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="h-px w-8 bg-gradient-to-r from-transparent to-cyan-500"></div>
+                        <div className="h-px w-8 bg-cyan-500/40"></div>
                         <p className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Advanced Security Scanner</p>
-                        <div className="h-px w-8 bg-gradient-to-l from-transparent to-cyan-500"></div>
+                        <div className="h-px w-8 bg-cyan-500/40"></div>
                     </div>
-                    <h2 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-cyan-300 mb-4 tracking-tight">
+                    <h2 className="text-6xl md:text-7xl font-bold text-cyan-300 mb-4 tracking-tight">
                         TrvstPulse
                     </h2>
                     <p className="text-lg text-slate-300 max-w-2xl mx-auto font-medium">
@@ -359,11 +359,10 @@ function LinkChecker() {
                         <button
                             key={mode}
                             onClick={() => setInputMode(mode)}
-                            className={`px-6 py-3 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 ${
-                                inputMode === mode
-                                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20"
+                            className={`px-6 py-3 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 ${inputMode === mode
+                                    ? "bg-cyan-600 text-white shadow-lg shadow-cyan-500/20"
                                     : "text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-700"
-                            }`}
+                                }`}
                         >
                             {mode === "manual" ? (
                                 <>
@@ -378,7 +377,7 @@ function LinkChecker() {
                     ))}
                 </div>
 
-                <div className="border border-slate-700/50 bg-gradient-to-br from-slate-900/80 to-slate-900/50 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-xl">
+                <div className="border border-slate-700/50 bg-slate-900/70 backdrop-blur-sm rounded-xl p-8 mb-8 shadow-xl">
                     <label className="block text-sm font-bold text-slate-200 mb-4 uppercase tracking-wide">
                         {inputMode === "manual" ? (
                             <span className="flex items-center gap-2"><Link className="h-4 w-4" /> Enter URLs (max 20)</span>
@@ -447,7 +446,7 @@ function LinkChecker() {
                         <button
                             onClick={inputMode === "manual" ? handleManualCheck : handleExtractAndCheck}
                             disabled={loading}
-                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:shadow-none uppercase tracking-wide"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 disabled:shadow-none uppercase tracking-wide"
                         >
                             {loading ? (
                                 <>
@@ -482,7 +481,7 @@ function LinkChecker() {
                                 { label: "Suspicious", value: summary.suspicious ?? 0, icon: <ShieldQuestionMark className="h-6 w-6" /> },
                                 { label: "Dangerous", value: summary.dangerous ?? 0, icon: <ShieldAlert className="h-6 w-6" /> },
                             ].map((stat, idx) => (
-                                <div key={idx} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-6 rounded-lg text-center hover:border-slate-600/80 transition-all shadow-md">
+                                <div key={idx} className="bg-slate-800/50 border border-slate-700/50 p-6 rounded-lg text-center hover:border-slate-600/80 transition-all shadow-md">
                                     <div className="flex justify-center mb-2">{stat.icon}</div>
                                     <p className="text-4xl font-bold text-cyan-300 mb-2">{stat.value}</p>
                                     <p className="text-xs text-slate-400 font-mono uppercase tracking-widest font-semibold">{stat.label}</p>
