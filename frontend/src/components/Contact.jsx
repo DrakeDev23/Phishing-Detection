@@ -28,9 +28,9 @@ function Contact() {
                 <div className="md:pl-16 flex flex-col justify-center gap-8">
                     <a
                         href={`mailto:${CONTACT_EMAIL}`}
-                        className="group flex items-baseline gap-3"
+                        className="group flex items-center gap-3"
                     >
-                        <Mail className="h-4 w-4 text-[#4C5468] transition-colors duration-300 group-hover:text-[#6C93FF] relative top-[2px]" />
+                        <Mail className="h-4 w-4 text-[#4C5468] transition-colors duration-300 group-hover:text-[#6C93FF]" />
                         <span className="text-xl font-mono text-[#E7EAF0] border-b border-transparent transition-colors duration-300 group-hover:border-[#6C93FF] group-hover:text-[#6C93FF]">
                             {CONTACT_EMAIL}
                         </span>
